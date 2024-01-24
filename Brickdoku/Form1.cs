@@ -12,6 +12,7 @@ namespace Brickdoku
 {
     public partial class Form1 : Form
     {
+        Button[,] btn = new Button[9, 9]; // Create 2D array of buttons
         public Form1()
         {
             InitializeComponent();
