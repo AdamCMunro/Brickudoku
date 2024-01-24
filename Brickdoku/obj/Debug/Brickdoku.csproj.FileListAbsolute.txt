@@ -1,0 +1,10 @@
+C:\Users\laura\Source\Repos\Brickudoku\Brickdoku\bin\Debug\Brickdoku.exe.config
+C:\Users\laura\Source\Repos\Brickudoku\Brickdoku\bin\Debug\Brickdoku.exe
+C:\Users\laura\Source\Repos\Brickudoku\Brickdoku\bin\Debug\Brickdoku.pdb
+C:\Users\laura\Source\Repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.csproj.AssemblyReference.cache
+C:\Users\laura\Source\Repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.Brickudoku.resources
+C:\Users\laura\Source\Repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.Properties.Resources.resources
+C:\Users\laura\Source\Repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.csproj.GenerateResource.cache
+C:\Users\laura\Source\Repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.csproj.CoreCompileInputs.cache
+C:\Users\laura\Source\Repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.exe
+C:\Users\laura\Source\Repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.pdb
