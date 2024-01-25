@@ -92,5 +92,8 @@
   <ItemGroup>
     <None Include="Resources\muted.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Brickudoku_Music.wav" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
