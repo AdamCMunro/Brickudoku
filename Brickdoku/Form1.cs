@@ -135,7 +135,6 @@ namespace Brickdoku
         {
             InitializeComponent(); // Initialise the new item
             initialiseShapes();
-            
 
         }
 
@@ -190,8 +189,14 @@ namespace Brickdoku
             // and display the grid game form
             BtnExit.Hide();
             BtnStart.Hide();
-            this.lblTitle.Font = new System.Drawing.Font("OCR A Extended", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            lblTitle.SetBounds(400, 20, 500, 60);
+            this.BackgroundImage = null; // remove image from gameplay screen
+            // create a title label for the top of the screen
+            Label lblTitle = new Label();
+            Controls.Add(lblTitle);
+            lblTitle.Font = new System.Drawing.Font("OCR A Extended", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblTitle.Text = "Brickudoku";
+            lblTitle.ForeColor = System.Drawing.Color.Crimson;
+            lblTitle.SetBounds(400, 10, 250, 40);
             createGrid();
         }
 
