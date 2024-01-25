@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.BtnStart = new System.Windows.Forms.Button();
             this.BtnExit = new System.Windows.Forms.Button();
+            this.BtnMute = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // BtnStart
@@ -56,6 +57,23 @@
             this.BtnExit.UseVisualStyleBackColor = false;
             this.BtnExit.Click += new System.EventHandler(this.BtnExit_Click);
             // 
+            // BtnMute
+            // 
+            this.BtnMute.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("BtnMute.BackgroundImage")));
+            this.BtnMute.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.BtnMute.Font = new System.Drawing.Font("OCR A Extended", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnMute.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(237)))), ((int)(((byte)(237)))));
+            this.BtnMute.Location = new System.Drawing.Point(892, 17);
+            this.BtnMute.Margin = new System.Windows.Forms.Padding(0);
+            this.BtnMute.Name = "BtnMute";
+            this.BtnMute.Size = new System.Drawing.Size(52, 48);
+            this.BtnMute.TabIndex = 3;
+            this.BtnMute.Text = "p";
+            this.BtnMute.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.BtnMute.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.BtnMute.UseVisualStyleBackColor = true;
+            this.BtnMute.Click += new System.EventHandler(this.BtnMute_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 25F);
@@ -63,6 +81,7 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(984, 561);
+            this.Controls.Add(this.BtnMute);
             this.Controls.Add(this.BtnExit);
             this.Controls.Add(this.BtnStart);
             this.Font = new System.Drawing.Font("OCR A Extended", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -82,6 +101,7 @@
         #endregion
         private System.Windows.Forms.Button BtnStart;
         private System.Windows.Forms.Button BtnExit;
+        private System.Windows.Forms.Button BtnMute;
     }
 }
 

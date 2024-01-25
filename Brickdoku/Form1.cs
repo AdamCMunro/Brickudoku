@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Brickdoku.Properties;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Media;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +18,7 @@ namespace Brickdoku
         Button[,] btn = new Button[9, 9]; // Create 2D array of buttons
         int selectedShape = -1;
         const int generatedSize = 20;
+        SoundPlayer music = new SoundPlayer(Properties.Resources.Brickudoku_Music);
 
         class Shape
         {
@@ -135,7 +138,17 @@ namespace Brickdoku
         {
             InitializeComponent(); // Initialise the new item
             initialiseShapes();
+            playMusic();
 
+        }
+
+        /**
+         * Play music function
+         */
+        void playMusic()
+        {
+            // used this to help https://stackoverflow.com/questions/14491431/playing-wav-file-with-c-sharp
+            music.PlayLooping(); // play music in a loop
         }
 
         /**
@@ -203,6 +216,44 @@ namespace Brickdoku
         private void BtnExit_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        // The volume control button
+        private void BtnMute_Click(object sender, EventArgs e)
+        {
+            // when clicked if playing, volume turns off, and image changes to muted image
+            
+            if (BtnMute.Text == "p")
+            {
+                Console.WriteLine("button pressed - muting");
+                music.Stop();
+                BtnMute.Text = "m";
+                try
+                {
+                    BtnMute.BackgroundImage = Properties.Resources.muted;
+                }
+                catch (System.IO.FileNotFoundException)
+                {
+                    Console.WriteLine("Error finding image!");
+                }
+            }
+            else
+            {
+                Console.WriteLine("button pressed - playing");
+                music.PlayLooping();
+                BtnMute.Text = "p";
+                try
+                {
+                    BtnMute.BackgroundImage = Properties.Resources.playing;
+                }
+                catch (System.IO.FileNotFoundException)
+                {
+                    Console.WriteLine("Error finding image!");
+                }
+            }
+            
+            
+
         }
     }
 }
