@@ -28,21 +28,75 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.BtnStart = new System.Windows.Forms.Button();
+            this.BtnExit = new System.Windows.Forms.Button();
             this.SuspendLayout();
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("OCR A Extended", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.ForeColor = System.Drawing.Color.Crimson;
+            this.lblTitle.Location = new System.Drawing.Point(282, 155);
+            this.lblTitle.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(418, 66);
+            this.lblTitle.TabIndex = 0;
+            this.lblTitle.Text = "Brickudoku";
+            // 
+            // BtnStart
+            // 
+            this.BtnStart.BackColor = System.Drawing.Color.LightPink;
+            this.BtnStart.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.BtnStart.Location = new System.Drawing.Point(244, 256);
+            this.BtnStart.Name = "BtnStart";
+            this.BtnStart.Size = new System.Drawing.Size(220, 150);
+            this.BtnStart.TabIndex = 1;
+            this.BtnStart.Text = "Start Game";
+            this.BtnStart.UseVisualStyleBackColor = false;
+            this.BtnStart.Click += new System.EventHandler(this.BtnStart_Click);
+            // 
+            // BtnExit
+            // 
+            this.BtnExit.BackColor = System.Drawing.Color.LightPink;
+            this.BtnExit.Location = new System.Drawing.Point(512, 256);
+            this.BtnExit.Name = "BtnExit";
+            this.BtnExit.Size = new System.Drawing.Size(220, 150);
+            this.BtnExit.TabIndex = 2;
+            this.BtnExit.Text = "Exit";
+            this.BtnExit.UseVisualStyleBackColor = false;
+            this.BtnExit.Click += new System.EventHandler(this.BtnExit_Click);
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(988, 692);
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ClientSize = new System.Drawing.Size(984, 561);
+            this.Controls.Add(this.BtnExit);
+            this.Controls.Add(this.BtnStart);
+            this.Controls.Add(this.lblTitle);
+            this.Font = new System.Drawing.Font("OCR A Extended", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(6);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(1000, 600);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Brickudoku";
+            this.Load += new System.EventHandler(this.Form1_Load_1);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
+
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.Button BtnStart;
+        private System.Windows.Forms.Button BtnExit;
     }
 }
 
