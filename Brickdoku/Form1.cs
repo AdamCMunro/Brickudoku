@@ -135,64 +135,69 @@ namespace Brickdoku
         {
             InitializeComponent(); // Initialise the new item
             initialiseShapes();
-            for (int x = 0; x < 9; x++)
+            
+
+        }
+
+        /**
+         * Function to create the grid
+         */
+        void createGrid()
+        {
+            for (int y = 0; y < 9; y++)
             {
-                for (int y = 0; y < 9; y++)
-                {   
+                for (int x = 0; x < 9; x++)
+                {
+                
                     btn[x, y] = new Button();
-                    btn[x, y].SetBounds(400 + (49 * x), 55 + (49 * y), 50, 50); 
-                    btn[x, y].BackColor = Color.LightPink; 
+                    btn[x, y].SetBounds(275 + (49 * x), 60 + (49 * y), 50, 50);
+                    // change background colour to white to differentiate squares
+                    if ((x>2 && x<6 && y<3) || (x<3 && y>2 && y<6) ||(x>5 && y>2 && y<6) || (x>2 && x<6 && y>5))
+                    {
+                        btn[x, y].BackColor = Color.White;
+                    }
+                    else
+                    {
+                        btn[x, y].BackColor = Color.LightPink;
+                    }
                     // btn[x, y].Text = Convert.ToString((x + 1) + "," + (y + 1)); for debugging purposes
                     btn[x, y].Click += new EventHandler(this.btnEvent_Click);
                     Controls.Add(btn[x, y]);
                     //remove the hover over highlight by setting 
-                    btn[x,y].Enabled = false;
+                    btn[x, y].Enabled = false;
+                    // slow down the appearing of the grid slightly
+                    System.Threading.Thread.Sleep(10);
                 }
             }
 
-            generateShape(23, 100, 100);
-
-            //Differentiate 3x3 grid sections with white colour
-
-            for (int x = 3; x < 6; x++)
-            {
-                for (int y = 0; y < 3; y++)
-                {
-                    btn[x, y].BackColor = Color.White;
-                }
-            }
-
-            for (int x = 0; x < 3; x++)
-            {
-                for (int y = 3; y < 6; y++)
-                {
-                    btn[x, y].BackColor = Color.White;
-                }
-            }
-
-            for (int x = 6; x < 9; x++)
-            {
-                for (int y = 3; y < 6; y++)
-                {
-                    btn[x, y].BackColor = Color.White;
-                }
-            }
-
-
-            for (int x = 3; x < 6; x++)
-            {
-                for (int y = 6; y < 9; y++)
-                {
-                    btn[x, y].BackColor = Color.White;
-                }
-            }
-
+            // just commenting out the shape for now
+            //generateShape(23, 100, 100);
         }
         void btnEvent_Click(object sender, EventArgs e) {
 
             Console.WriteLine(((Button)sender).Text); // SAME handler asbefore
-        }                                                   
+        }
 
 
+        private void Form1_Load_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnStart_Click(object sender, EventArgs e)
+        {
+            // when start button is clicked, hide all the items in the current menu screen
+            // and display the grid game form
+            BtnExit.Hide();
+            BtnStart.Hide();
+            this.lblTitle.Font = new System.Drawing.Font("OCR A Extended", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblTitle.SetBounds(400, 20, 500, 60);
+            createGrid();
+        }
+
+        private void BtnExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
     }
 }
