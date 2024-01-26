@@ -17,7 +17,7 @@ namespace Brickdoku
     {
         Button[,] btn = new Button[9, 9]; // Create 2D array of buttons
         int selectedShape = -1;
-        const int generatedSize = 20;
+        const int generatedSize = 30;
         SoundPlayer music = new SoundPlayer(Properties.Resources.Brickudoku_Music);
 
         class Shape
@@ -61,6 +61,8 @@ namespace Brickdoku
 
             public int getXOffset(int i)
             {
+                // System.IndexOutOfRangeException error keeps appearing here on some runs only and i dont know why
+                // @adam
                 return xOffsetData[i];
             }
 
@@ -113,23 +115,59 @@ namespace Brickdoku
             shapes[37] = new Shape(5, new int[] { 0, -(generatedSize), -(generatedSize), generatedSize, generatedSize }, new int[] { 0, 0, -(generatedSize), 0, -(generatedSize) }); // 'C' shape rotated 270 degrees
         }
 
-        void generateShape(int index, int x, int y) // creates a shape using the data in the shapes array
+        void generateShape(int index, int x, int y, int size, int[] generatedNumbers) // creates a shape using the data in the shapes array
         {
+            Console.WriteLine("Y:" + y);
             for (int i = 0; i < shapes[index].getSize(); i++) // creates a button for each block required to make the shape
             {
-                shapes[index].getBlockAtIndex(i).SetBounds(x + shapes[index].getXOffset(i), y + shapes[index].getYOffset(i), generatedSize, generatedSize); //blocks are placed with respect to their offset data
-                shapes[index].getBlockAtIndex(i).BackColor = Color.DarkRed;
-                shapes[index].getBlockAtIndex(i).ForeColor = Color.DarkRed;
+                shapes[index].getBlockAtIndex(i).SetBounds(x + shapes[index].getXOffset(i), y + shapes[index].getYOffset(i), size, size); //blocks are placed with respect to their offset data
+                shapes[index].getBlockAtIndex(i).BackColor = Color.Crimson;
+                shapes[index].getBlockAtIndex(i).ForeColor = Color.Crimson;
                 shapes[index].getBlockAtIndex(i).Text = index.ToString(); // text is set to the index of the shape in the array for easy identification later
-                shapes[index].getBlockAtIndex(i).Click += new EventHandler(this.clickGeneratedShape);
+                shapes[index].getBlockAtIndex(i).Click += new EventHandler((sender, e) => clickGeneratedShape(sender, e, x, y, generatedNumbers));
                 Controls.Add(shapes[index].getBlockAtIndex(i));
-                shapes[index].getBlockAtIndex(i).Enabled = false; // highlight is disabled
+                // doesn't allow a disabled button to have its forecolor changed so i have enabled the button again
+                //shapes[index].getBlockAtIndex(i).Enabled = false; // highlight is disabled
             }
         }
 
-        void clickGeneratedShape(object sender, EventArgs e)
+        /**
+         * Shapes array is the indexes of all shapes currently on the page
+         */
+        void clickGeneratedShape(object sender, EventArgs e, int x, int y, int[] generatedNumbers)
         {
             selectedShape = int.Parse(((Button)sender).Text); // on click, selected shape is set to the index 
+            Console.WriteLine("Shape clicked!");
+            // first need to make any previously selected shapes normal colour and size again
+            // delete all shapes from the page and regenerate
+            for (int i=0; i < generatedNumbers.Length; i++)
+            {
+                for (int j = 0; j < shapes[generatedNumbers[i]].getSize(); j++)
+                {
+                    
+                    shapes[generatedNumbers[i]].getBlockAtIndex(j).BackColor = Color.Crimson;
+                    shapes[generatedNumbers[i]].getBlockAtIndex(j).ForeColor = Color.Crimson;
+                }
+            }
+
+           
+            for (int i = 0; i < shapes[selectedShape].getSize(); i++)
+            {
+                shapes[selectedShape].getBlockAtIndex(i).BackColor = Color.DarkRed;
+                shapes[selectedShape].getBlockAtIndex(i).ForeColor = Color.DarkRed;
+                
+            }
+
+            // this stuff all makes the size change too but is pretty inefficient and slow
+            // Controls.Remove(shapes[generatedNumbers[i]].getBlockAtIndex(j));
+            // generate each shape again with original properties
+            /*for (int i = 0; i < generatedNumbers.Length; i++)
+            {
+                generateShape(generatedNumbers[i], x, 100 + (i*150), generatedSize, generatedNumbers);
+            }*/
+
+            // for each button on the clicked shape, make it bigger and change the colour
+            //generateShape(selectedShape, x, y, 40, generatedNumbers); // kind of works to make it bigger but looks a bit messy
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -181,9 +219,32 @@ namespace Brickdoku
                     System.Threading.Thread.Sleep(10);
                 }
             }
+        }
 
-            // just commenting out the shape for now
-            //generateShape(23, 100, 100);
+        void placeShapes()
+        {
+            // generate 3 random numbers and use that to generate three shapes
+            // it seems to bug if two numbers are the same so need to check for that
+            int[] generatedNumbers = new int[3];
+            for (int i=0; i<3; i++)
+            {
+                Random random = new Random();
+                int number = random.Next(38); // generate random number < 38
+                // check number is not already in list of already generated and remove if it is
+                while (generatedNumbers.Contains(number))
+                {
+                    // if it already contains the number generate a new number till a unique one is found
+                    random = new Random();
+                    number = random.Next(38);
+                }
+                // add the number to the array so it is not used again
+                generatedNumbers[i] = number;
+       
+                // write randomly generated number to output
+                Console.WriteLine("Random number: " + number);
+                generateShape(number, 100, 100 + (i*150), generatedSize, generatedNumbers);
+            }
+            
         }
         void btnEvent_Click(object sender, EventArgs e) {
 
@@ -202,7 +263,7 @@ namespace Brickdoku
             // and display the grid game form
             BtnExit.Hide();
             BtnStart.Hide();
-            this.BackgroundImage = null; // remove image from gameplay screen
+            
             // create a title label for the top of the screen
             Label lblTitle = new Label();
             Controls.Add(lblTitle);
@@ -210,7 +271,10 @@ namespace Brickdoku
             lblTitle.Text = "Brickudoku";
             lblTitle.ForeColor = System.Drawing.Color.Crimson;
             lblTitle.SetBounds(400, 10, 250, 40);
+            this.BackgroundImage = null; // remove image from gameplay screen
             createGrid();
+            placeShapes();
+
         }
 
         private void BtnExit_Click(object sender, EventArgs e)
@@ -251,8 +315,6 @@ namespace Brickdoku
                     Console.WriteLine("Error finding image!");
                 }
             }
-            
-            
 
         }
     }
