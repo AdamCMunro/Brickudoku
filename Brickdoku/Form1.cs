@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 using System.Media;
 using System.Reflection;
@@ -18,6 +19,7 @@ namespace Brickdoku
         Button[,] btn = new Button[9, 9]; // Create 2D array of buttons
         int selectedShape = -1;
         const int generatedSize = 50;
+        int numberOfShapes = 0;
         SoundPlayer music = new SoundPlayer(Properties.Resources.Brickudoku_Music);
 
         //added for grid interaction
@@ -66,6 +68,7 @@ namespace Brickdoku
                 return size;
             }
 
+            // sometimes errors here
             public int getXOffset(int i)
             {
                 return xOffsetData[i];
@@ -145,6 +148,9 @@ namespace Brickdoku
                 // Add the button to the main form
                 Controls.Add(block);
                 block.Enabled = true; // highlight is enabled for the event handlers to work
+
+                // bring shape to front
+                block.BringToFront();
 
                 //event handlers for drag and drop
                 block.MouseDown += new MouseEventHandler((sender, e) => btnEvent_MouseDown(sender, e, generatedNumbers));
@@ -262,6 +268,7 @@ namespace Brickdoku
             }
         }
 
+
         // snaps the shape to grid, ensuring it aligns
         private void SnapShapeToGrid(Shape shape)
         {
@@ -271,13 +278,17 @@ namespace Brickdoku
                 {
                     Button button = shape.getBlockAtIndex(i);
                     SnapButtonToGrid(button);
+                    // get rid of text as it is not needed anymore
+                    button.Text = "";
                     button.Enabled = false; //disable button so it can't be removed from grid
                     // make shape light again
                     button.BackColor = Color.Crimson;
                     button.ForeColor = Color.Crimson;
-                    // get rid of text as it is not needed anymore
-                    button.Text = "";
+                    
                 }
+                // decrement number of shapes
+                numberOfShapes --;
+                regenerateShapes();
             }
             else
             {
@@ -385,11 +396,6 @@ namespace Brickdoku
             }
         }
 
-        void clickGeneratedShape(object sender, EventArgs e)
-        {
-            selectedShape = int.Parse(((Button)sender).Text); // on click, selected shape is set to the index 
-
-        }
         private void Form1_Load(object sender, EventArgs e)
         {
         }
@@ -469,12 +475,11 @@ namespace Brickdoku
             lblTitle.ForeColor = System.Drawing.Color.Crimson;
             lblTitle.SetBounds(400, 10, 250, 40);
             placeShapes();
-            //generateShape(24, 100, 100);
-            //generateShape(25, 100, 100);
             createGrid();
-            
             InitialiseGridOccupancy();
         }
+
+        
 
         void placeShapes()
         {
@@ -498,8 +503,25 @@ namespace Brickdoku
                 // write randomly generated number to output
                 Console.WriteLine("Random number: " + number);
                 generateShape(number, 100, 100 + (i * 150), generatedNumbers);
+                numberOfShapes++;
             }
 
+        }
+
+        /**
+         * Check if new shapes are needed and regenerate
+         */
+        void regenerateShapes()
+        {
+            // if there are no shapes, generate 3 new ones
+            if (numberOfShapes == 0)
+            {
+                placeShapes();
+            }
+            else
+            {
+                Console.WriteLine("Num shapes: " + numberOfShapes);
+            }
         }
 
         private void BtnExit_Click(object sender, EventArgs e)
@@ -540,9 +562,6 @@ namespace Brickdoku
                     Console.WriteLine("Error finding image!");
                 }
             }
-            
-            
-
         }
     }
 }
