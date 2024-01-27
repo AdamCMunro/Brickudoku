@@ -18,3 +18,13 @@ C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.csproj.Gener
 C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.csproj.CoreCompileInputs.cache
 C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.exe
 C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.pdb
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks3\Brickdoku\bin\Debug\Brickdoku.exe.config
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks3\Brickdoku\bin\Debug\Brickdoku.exe
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks3\Brickdoku\bin\Debug\Brickdoku.pdb
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks3\Brickdoku\obj\Debug\Brickdoku.csproj.AssemblyReference.cache
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks3\Brickdoku\obj\Debug\Brickdoku.Form1.resources
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks3\Brickdoku\obj\Debug\Brickdoku.Properties.Resources.resources
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks3\Brickdoku\obj\Debug\Brickdoku.csproj.GenerateResource.cache
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks3\Brickdoku\obj\Debug\Brickdoku.csproj.CoreCompileInputs.cache
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks3\Brickdoku\obj\Debug\Brickdoku.exe
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks3\Brickdoku\obj\Debug\Brickdoku.pdb

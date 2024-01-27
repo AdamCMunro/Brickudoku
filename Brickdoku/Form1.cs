@@ -130,7 +130,7 @@ namespace Brickdoku
             shapes[47] = new Shape(5, new int[] { 0, -(generatedSize), -(generatedSize), generatedSize, generatedSize }, new int[] { 0, 0, -(generatedSize), 0, -(generatedSize) }); // 'C' shape rotated 270 degrees
         }
 
-        void generateShape(int index, int x, int y) // creates a shape using the data in the shapes array
+        void generateShape(int index, int x, int y, int[] generatedNumbers) // creates a shape using the data in the shapes array
         { 
 
             for (int i = 0; i < shapes[index].getSize(); i++) // creates a button for each block required to make the shape
@@ -138,8 +138,8 @@ namespace Brickdoku
                 Button block = shapes[index].getBlockAtIndex(i);
 
                 block.SetBounds(x + shapes[index].getXOffset(i), y + shapes[index].getYOffset(i), generatedSize, generatedSize); //blocks are placed with respect to their offset data
-                block.BackColor = Color.DarkRed;
-                block.ForeColor = Color.DarkRed;
+                block.BackColor = Color.Crimson;
+                block.ForeColor = Color.Crimson;
                 block.Text = index.ToString(); // text is set to the index of the shape in the array for easy identification later
 
                 // Add the button to the main form
@@ -147,7 +147,7 @@ namespace Brickdoku
                 block.Enabled = true; // highlight is enabled for the event handlers to work
 
                 //event handlers for drag and drop
-                block.MouseDown += new MouseEventHandler(this.btnEvent_MouseDown);
+                block.MouseDown += new MouseEventHandler((sender, e) => btnEvent_MouseDown(sender, e, generatedNumbers));
                 block.MouseMove += new MouseEventHandler(this.btnEvent_MouseMove);
                 block.MouseUp += new MouseEventHandler(this.btnEvent_MouseUp);
 
@@ -183,7 +183,7 @@ namespace Brickdoku
             {  
                 dragging = false; //reset flag
 
-                SnapShapeToGrid(draggedShape); 
+                SnapShapeToGrid(draggedShape);
             }
         }
 
@@ -209,13 +209,32 @@ namespace Brickdoku
                 Refresh(); // stop the shape from lagging
             }
         }
-
+        //
         //used in dragging and dropping the shapes
-        private void btnEvent_MouseDown(object sender, MouseEventArgs e)
+        private void btnEvent_MouseDown(object sender, MouseEventArgs e, int[] generatedNumbers)
         {
             // if left mouse button is pressed
             if (e.Button == MouseButtons.Left)
-            { 
+            {
+                // set colour of clicked shape to be dark red
+                selectedShape = int.Parse(((Button)sender).Text); // on click, selected shape is set to the index 
+                for (int i = 0; i < generatedNumbers.Length; i++)
+                {
+                    for (int j = 0; j < shapes[generatedNumbers[i]].getSize(); j++)
+                    {
+                        // change any previously clicked shapes to be back to normal
+                        shapes[generatedNumbers[i]].getBlockAtIndex(j).BackColor = Color.Crimson;
+                        shapes[generatedNumbers[i]].getBlockAtIndex(j).ForeColor = Color.Crimson;
+                    }
+                }
+
+                for (int i = 0; i < shapes[selectedShape].getSize(); i++)
+                {
+                    // change current shape to be dark red
+                    shapes[selectedShape].getBlockAtIndex(i).BackColor = Color.DarkRed;
+                    shapes[selectedShape].getBlockAtIndex(i).ForeColor = Color.DarkRed;
+
+                }
                 dragging = true; //set dragging flag to true
 
                 // Find the shape containing the button
@@ -253,6 +272,11 @@ namespace Brickdoku
                     Button button = shape.getBlockAtIndex(i);
                     SnapButtonToGrid(button);
                     button.Enabled = false; //disable button so it can't be removed from grid
+                    // make shape light again
+                    button.BackColor = Color.Crimson;
+                    button.ForeColor = Color.Crimson;
+                    // get rid of text as it is not needed anymore
+                    button.Text = "";
                 }
             }
             else
@@ -364,6 +388,7 @@ namespace Brickdoku
         void clickGeneratedShape(object sender, EventArgs e)
         {
             selectedShape = int.Parse(((Button)sender).Text); // on click, selected shape is set to the index 
+
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -417,9 +442,6 @@ namespace Brickdoku
 
                 }
             }
-
-            // just commenting out the shape for now
-            //generateShape(23, 100, 100);
         }
         void btnEvent_Click(object sender, EventArgs e) {
 
@@ -446,11 +468,38 @@ namespace Brickdoku
             lblTitle.Text = "Brickudoku";
             lblTitle.ForeColor = System.Drawing.Color.Crimson;
             lblTitle.SetBounds(400, 10, 250, 40);
-
-            generateShape(23, 100, 100);
-            generateShape(22, 100, 100);
+            placeShapes();
+            //generateShape(24, 100, 100);
+            //generateShape(25, 100, 100);
             createGrid();
+            
             InitialiseGridOccupancy();
+        }
+
+        void placeShapes()
+        {
+            // generate 3 random numbers and use that to generate three shapes
+            // it seems to bug if two numbers are the same so need to check for that
+            int[] generatedNumbers = new int[3];
+            for (int i = 0; i < 3; i++)
+            {
+                Random random = new Random();
+                int number = random.Next(38); // generate random number < 38
+                // check number is not already in list of already generated and remove if it is
+                while (generatedNumbers.Contains(number))
+                {
+                    // if it already contains the number generate a new number till a unique one is found
+                    random = new Random();
+                    number = random.Next(38);
+                }
+                // add the number to the array so it is not used again
+                generatedNumbers[i] = number;
+
+                // write randomly generated number to output
+                Console.WriteLine("Random number: " + number);
+                generateShape(number, 100, 100 + (i * 150), generatedNumbers);
+            }
+
         }
 
         private void BtnExit_Click(object sender, EventArgs e)
