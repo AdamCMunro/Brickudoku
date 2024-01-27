@@ -17,8 +17,15 @@ namespace Brickdoku
     {
         Button[,] btn = new Button[9, 9]; // Create 2D array of buttons
         int selectedShape = -1;
-        const int generatedSize = 20;
+        const int generatedSize = 50;
         SoundPlayer music = new SoundPlayer(Properties.Resources.Brickudoku_Music);
+
+        //added for grid interaction
+        private bool dragging = false;
+        private Shape draggedShape = null;
+        private Point offset;
+
+        bool[,] gridOccupied = new bool[9, 9]; //keep track of the occupied grid squares
 
         class Shape
         {
@@ -124,16 +131,233 @@ namespace Brickdoku
         }
 
         void generateShape(int index, int x, int y) // creates a shape using the data in the shapes array
-        {
+        { 
+
             for (int i = 0; i < shapes[index].getSize(); i++) // creates a button for each block required to make the shape
             {
-                shapes[index].getBlockAtIndex(i).SetBounds(x + shapes[index].getXOffset(i), y + shapes[index].getYOffset(i), generatedSize, generatedSize); //blocks are placed with respect to their offset data
-                shapes[index].getBlockAtIndex(i).BackColor = Color.DarkRed;
-                shapes[index].getBlockAtIndex(i).ForeColor = Color.DarkRed;
-                shapes[index].getBlockAtIndex(i).Text = index.ToString(); // text is set to the index of the shape in the array for easy identification later
-                shapes[index].getBlockAtIndex(i).Click += new EventHandler(this.clickGeneratedShape);
-                Controls.Add(shapes[index].getBlockAtIndex(i));
-                shapes[index].getBlockAtIndex(i).Enabled = false; // highlight is disabled
+                Button block = shapes[index].getBlockAtIndex(i);
+
+                block.SetBounds(x + shapes[index].getXOffset(i), y + shapes[index].getYOffset(i), generatedSize, generatedSize); //blocks are placed with respect to their offset data
+                block.BackColor = Color.DarkRed;
+                block.ForeColor = Color.DarkRed;
+                block.Text = index.ToString(); // text is set to the index of the shape in the array for easy identification later
+
+                // Add the button to the main form
+                Controls.Add(block);
+                block.Enabled = true; // highlight is enabled for the event handlers to work
+
+                //event handlers for drag and drop
+                block.MouseDown += new MouseEventHandler(this.btnEvent_MouseDown);
+                block.MouseMove += new MouseEventHandler(this.btnEvent_MouseMove);
+                block.MouseUp += new MouseEventHandler(this.btnEvent_MouseUp);
+
+            }
+        }
+
+        private void InitialiseGridOccupancy()
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    gridOccupied[i, j] = false;
+                }
+            }
+        }
+
+        private void MarkGridOccupied(int startX, int startY, int width, int height)
+        {
+            for (int i = startX; i < startX + width; i++)
+            {
+                for (int j = startY; j < startY + height; j++)
+                {
+                    gridOccupied[i, j] = true;
+                }
+            }
+        }
+
+        //used in dragging and dropping the shapes
+        private void btnEvent_MouseUp(object sender, MouseEventArgs e)
+        {   
+            if (dragging) //if dragging is in progress
+            {  
+                dragging = false; //reset flag
+
+                SnapShapeToGrid(draggedShape); 
+            }
+        }
+
+        //used in dragging and dropping the shapes
+        private void btnEvent_MouseMove(object sender, MouseEventArgs e)
+        {   
+            if (dragging)  //if dragging is in progress
+            {
+                Shape shape = draggedShape;
+
+                // Move each button in shape to its new location
+                for (int i = 0; i < shape.getSize(); i++)
+                {
+                    Button button = shape.getBlockAtIndex(i);
+
+                    // Calculate new location for each button in the shape
+                    int newLeft = e.X + button.Left - offset.X;
+                    int newTop = e.Y + button.Top - offset.Y;
+
+                    button.Location = new Point(newLeft, newTop);
+                }
+              
+                Refresh(); // stop the shape from lagging
+            }
+        }
+
+        //used in dragging and dropping the shapes
+        private void btnEvent_MouseDown(object sender, MouseEventArgs e)
+        {
+            // if left mouse button is pressed
+            if (e.Button == MouseButtons.Left)
+            { 
+                dragging = true; //set dragging flag to true
+
+                // Find the shape containing the button
+                Button clickedButton = (Button)sender;
+                Shape foundShape = null;
+
+                // iterate through shapes to find the shape for the clicked button
+                foreach (Shape shape in shapes)
+                {
+                    for (int i = 0; i < shape.getSize(); i++)
+                    {
+                        if (shape.getBlockAtIndex(i) == clickedButton)
+                        {
+                            foundShape = shape;
+                            break;
+                        }
+                    }
+                    if (foundShape != null)
+                    {
+                        break;
+                    }
+                }
+                draggedShape = foundShape; // set the found shape as the dragged shape
+                offset = new Point(e.X, e.Y); //set the initial offset for dragging
+            }
+        }
+
+        // snaps the shape to grid, ensuring it aligns
+        private void SnapShapeToGrid(Shape shape)
+        {
+            if (IsShapeFullyOnGrid(shape))
+            {
+                for (int i = 0; i < shape.getSize(); i++)
+                {
+                    Button button = shape.getBlockAtIndex(i);
+                    SnapButtonToGrid(button);
+                    button.Enabled = false; //disable button so it can't be removed from grid
+                }
+            }
+            else
+            {
+                //If the shape is not fully on the grid, move it off the grid
+                MoveShapeOffGrid(shape);
+            }
+        }
+
+        //helper function for SnapShapeToGrid function
+        private bool IsShapeFullyOnGrid(Shape shape)
+        {
+            for (int i = 0; i < shape.getSize(); i++)
+            {
+                Button button = shape.getBlockAtIndex(i);
+
+                if (!IsButtonEntirelyOnGrid(button))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        //helper function for IsShapeFullyOnGrid function
+        // checks if all edges of the button are within the grid boundaries
+        // and if the corresponding grid squares are unoccupied
+        private bool IsButtonEntirelyOnGrid(Button button)
+        {
+            int buffer = -24; // Adjust this value based on the desired buffer width
+
+            int leftEdge = button.Location.X - buffer;
+            int rightEdge = button.Location.X + button.Width + buffer;
+            int topEdge = button.Location.Y - buffer;
+            int bottomEdge = button.Location.Y + button.Height + buffer;
+
+            // Check if all edges of the button are within the grid boundaries
+            if (leftEdge < 275 || rightEdge > 275 + 9 * 49 || topEdge < 60 || bottomEdge > 60 + 9 * 49)
+            {
+                return false;
+            }
+
+            // Check if the squares on the grid are unoccupied
+            int gridX = (button.Location.X - 275) / 49;
+            int gridY = (button.Location.Y - 60) / 49;
+
+            for (int i = gridX; i < gridX + button.Width / 49; i++)
+            {
+                for (int j = gridY; j < gridY + button.Height / 49; j++)
+                {
+                    if (gridOccupied[i, j])
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        //helper function for SnapShapeToGrid function
+        // snaps the center of the button to the nearest grid position
+        private void SnapButtonToGrid(Button button)
+        {
+            int centerX = button.Location.X + button.Width / 2;
+            int centerY = button.Location.Y + button.Height / 2;
+            int gridX = (centerX - 275) / 49;
+            int gridY = (centerY - 60) / 49;
+
+            int newX = 275 + gridX * 49 + (49 - button.Width) / 2;
+            int newY = 60 + gridY * 49 + (49 - button.Height) / 2;
+
+            // Mark the squares on the grid as occupied
+            MarkGridOccupied(gridX, gridY, button.Width / 49, button.Height / 49);
+
+            button.Location = new Point(newX, newY);
+        }
+
+        //helper function for SnapShapeToGrid function.
+        //moves the shape off if it doesn't fit on the grid
+        private void MoveShapeOffGrid(Shape shape)
+        {
+            // Calculate the average position of the shape buttons
+            int avgX = 0;
+            int avgY = 0;
+
+            for (int i = 0; i < shape.getSize(); i++)
+            {
+                Button button = shape.getBlockAtIndex(i);
+                avgX += button.Location.X + button.Width / 2;
+                avgY += button.Location.Y + button.Height / 2;
+            }
+
+            avgX /= shape.getSize();
+            avgY /= shape.getSize();
+
+            // Move the entire shape off the grid
+            int offsetX = avgX - 100;
+            int offsetY = avgY - 60;
+
+            for (int i = 0; i < shape.getSize(); i++)
+            {
+                Button button = shape.getBlockAtIndex(i);
+                button.Location = new Point(button.Location.X - offsetX, button.Location.Y - offsetY);
             }
         }
 
@@ -189,6 +413,8 @@ namespace Brickdoku
                     btn[x, y].Enabled = false;
                     // slow down the appearing of the grid slightly
                     System.Threading.Thread.Sleep(10);
+
+
                 }
             }
 
@@ -220,7 +446,11 @@ namespace Brickdoku
             lblTitle.Text = "Brickudoku";
             lblTitle.ForeColor = System.Drawing.Color.Crimson;
             lblTitle.SetBounds(400, 10, 250, 40);
+
+            generateShape(23, 100, 100);
+            generateShape(22, 100, 100);
             createGrid();
+            InitialiseGridOccupancy();
         }
 
         private void BtnExit_Click(object sender, EventArgs e)
