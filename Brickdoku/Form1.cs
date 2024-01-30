@@ -136,7 +136,6 @@ namespace Brickdoku
 
         void generateShape(int index, int x, int y, int[] generatedNumbers) // creates a shape using the data in the shapes array
         {
-
             for (int i = 0; i < shapes[index].getSize(); i++) // creates a button for each block required to make the shape
             {
                 Button block = shapes[index].getBlockAtIndex(i);
@@ -149,6 +148,7 @@ namespace Brickdoku
                 // Add the button to the main form
                 Controls.Add(block);
                 block.Enabled = true; // highlight is enabled for the event handlers to work
+                block.Visible = true;
 
                 // bring shape to front
                 block.BringToFront();
@@ -159,6 +159,7 @@ namespace Brickdoku
                 block.MouseUp += new MouseEventHandler(this.btnEvent_MouseUp);
 
             }
+            Console.WriteLine("Shape generated");
         }
 
         private void InitialiseGridOccupancy()
@@ -272,7 +273,8 @@ namespace Brickdoku
         // places the shape to grid, ensuring it aligns
         private void PlaceShapeToGrid(Shape shape)
         {
-            if (IsShapeFullyOnGrid(shape))
+            Console.WriteLine("Fully on grid? " + IsShapeFullyOnGrid(shape));
+            if (IsShapeFullyOnGrid(shape) == true)
             {
                 for (int i = 0; i < shape.getSize(); i++)
                 {
@@ -281,11 +283,15 @@ namespace Brickdoku
                     // Change the color of the grid squares underneath the shape
                     ChangeGridColor(button);
 
-
-
+                    int[] generatedNumbers = { 1, 2, 3 };
                     // Make the original shape disappear
                     button.Visible = false;
+                    Controls.Remove(button);
+                    button.MouseDown -= new MouseEventHandler((sender, e) => btnEvent_MouseDown(sender, e, generatedNumbers));
+                    button.MouseMove -= new MouseEventHandler(this.btnEvent_MouseMove);
+                    button.MouseUp -= new MouseEventHandler(this.btnEvent_MouseUp);
                 }
+                displayGridOccupied();
 
                 // Decrement the number of shapes
                 numberOfShapes--;
@@ -309,7 +315,7 @@ namespace Brickdoku
             int gridY = (centerY - 60) / 50;
 
             // Change the color of the grid square underneath the shape to a different color (e.g., Color.Gray)
-            btn[gridX, gridY].BackColor = Color.Gray;
+            btn[gridX, gridY].BackColor = Color.Crimson;
             gridOccupied[gridX, gridY] = true;
         }
 
@@ -351,9 +357,9 @@ namespace Brickdoku
             int gridX = (button.Location.X - 275) / 50;
             int gridY = (button.Location.Y - 60) / 50;
 
-            for (int i = gridX; i < gridX + button.Width / 50; i++)
+            for (int i = gridX; i < gridX + button.Width / 40; i++)
             {
-                for (int j = gridY; j < gridY + button.Height / 50; j++)
+                for (int j = gridY; j < gridY + button.Height / 40; j++)
                 {
                     if (gridOccupied[i, j])
                     {
@@ -491,11 +497,13 @@ namespace Brickdoku
                 Random random = new Random();
                 int number = random.Next(38); // generate random number < 38
                 // check number is not already in list of already generated and remove if it is
-                while (generatedNumbers.Contains(number))
+                // not allowing 33 just now as it is bugging
+                while (generatedNumbers.Contains(number) || number == 33)
                 {
                     // if it already contains the number generate a new number till a unique one is found
                     random = new Random();
                     number = random.Next(38);
+
                 }
                 // add the number to the array so it is not used again
                 generatedNumbers[i] = number;
@@ -516,11 +524,91 @@ namespace Brickdoku
             // if there are no shapes, generate 3 new ones
             if (numberOfShapes == 0)
             {
+                Console.WriteLine("Num shapes: " + numberOfShapes);
                 placeShapes();
             }
             else
             {
                 Console.WriteLine("Num shapes: " + numberOfShapes);
+            }
+        }
+
+        /**
+ * Function to check for a complete line or square
+ */
+        void checkComplete()
+        {
+            // remove column
+            // if any all i's or all j's are all complete, then there is a full line
+            for (int x = 0; x < 9; x++)
+            {
+                for (int y = 0; y < 9; y++)
+                {
+                    if (gridOccupied[x, y] == false)
+                    {
+                        Console.WriteLine("false" + x + "," + y);
+                        // if one in i, j is not occupied, then the whole line is not occupied
+                        continue; // go to next loop of i
+                    }
+                    if (y == 8)
+                    {
+                        Console.WriteLine("column: " + y + " fully occupied");
+                        // if j is 8, then everyhting in that column is occupied, so clear
+                        for (int k = 0; k < 9; k++)
+                        {
+                            gridOccupied[k, y] = false;
+                            // set colour back to original
+                        }
+                    }
+                }
+            }
+            // check rows
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    if (gridOccupied[x, y] == false)
+                    {
+                        Console.WriteLine("false" + x + "," + y);
+                        // if one in i, j is not occupied, then the whole line is not occupied
+                        continue; // go to next loop of i
+                    }
+                    // if we reach x = 8 then there is a full row
+                    if (x == 8)
+                    {
+                        Console.WriteLine("Row: " + x + " fully occupied");
+                        // if j is 8, then everyhting in that column is occupied, so clear
+                        for (int k = 0; k < 9; k++)
+                        {
+                            gridOccupied[k, y] = false;
+                            // set colour back to original
+                        }
+                    }
+                }
+            }
+            // check for squares
+
+        }
+
+        // to test grid occupied
+        void displayGridOccupied()
+        {
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9;x++)
+                {
+               
+                    if (gridOccupied[x, y] == true)
+                    {
+                        Console.Write("1  ");
+                    }
+                    else
+                    {
+                        Console.Write("0  ");
+                    }
+                    
+                }
+                Console.WriteLine(" "); // new line
             }
         }
 
