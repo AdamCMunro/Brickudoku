@@ -80,7 +80,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(978, 544);
+            this.ClientSize = new System.Drawing.Size(978, 624);
             this.Controls.Add(this.BtnMute);
             this.Controls.Add(this.BtnExit);
             this.Controls.Add(this.BtnStart);
@@ -89,9 +89,9 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(1000, 600);
+            this.MaximumSize = new System.Drawing.Size(1000, 700);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(1000, 600);
+            this.MinimumSize = new System.Drawing.Size(1000, 680);
             this.Name = "Form1";
             this.Text = "Brickudoku";
             this.Load += new System.EventHandler(this.Form1_Load_1);
