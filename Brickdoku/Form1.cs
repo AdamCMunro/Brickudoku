@@ -20,7 +20,7 @@ namespace Brickdoku
     {
         Button[,] btn = new Button[9, 9]; // Create 2D array of buttons
         int selectedShape = -1;
-        const int generatedSize = 40;
+        const int generatedSize = 50;
         int numberOfShapes = 0;
         SoundPlayer music = new SoundPlayer(Properties.Resources.Brickudoku_Music);
         Color palePink = ColorTranslator.FromHtml("#ffccd4"); // light pink sqaure colour
@@ -351,7 +351,7 @@ namespace Brickdoku
         // and if the corresponding grid squares are unoccupied
         private bool IsButtonEntirelyOnGrid(Button button)
         {
-            int buffer = -20; // Adjust this value based on the desired buffer width
+            int buffer = -22; // Adjust this value based on the desired buffer width 
 
             int leftEdge = button.Location.X - buffer;
             int rightEdge = button.Location.X + button.Width + buffer;
@@ -364,15 +364,15 @@ namespace Brickdoku
                 return false;
             }
 
-            // Check if the squares on the grid are unoccupied
-            int gridX = (button.Location.X - 275) / 50;
-            int gridY = (button.Location.Y - 60) / 50;
+            // Check if the squares on the grid, including a buffer around each button, are unoccupied
+            int gridX = (button.Location.X - buffer - 275) / 50; // left-side buffer
+            int gridY = (button.Location.Y - buffer - 60) / 50; // top-side buffer
 
-            for (int i = gridX; i < gridX + button.Width / 40; i++)
+            for (int i = gridX; i < gridX + button.Width / 50; i++)
             {
-                for (int j = gridY; j < gridY + button.Height / 40; j++)
+                for (int j = gridY; j < gridY + button.Height / 50; j++)
                 {
-                    if (gridOccupied[i, j])
+                    if (i >= 0 && i < 9 && j >= 0 && j < 9 && gridOccupied[i, j])
                     {
                         return false;
                     }
