@@ -18,12 +18,12 @@ namespace Brickdoku
 {
     public partial class Form1 : Form
     {
-        Button[,] btn = new Button[9, 9]; // Create 2D array of buttons
-        int selectedShape = -1;
+        Button[,] btn = new Button[9, 9]; // Create 2D array of button
         const int generatedSize = 50;
         int numberOfShapes = 0;
         int[] generatedNumbers = { -1, -1, -1 };
         bool[] placeable = new bool[] { true, true, true };
+        int numberNotPlaceable = 0;
         SoundPlayer music = new SoundPlayer(Properties.Resources.Brickudoku_Music);
         Color palePink = ColorTranslator.FromHtml("#ffccd4"); // light pink sqaure colour
         Color midPink = ColorTranslator.FromHtml("#ff99a8"); // light pink sqaure colour
@@ -43,6 +43,8 @@ namespace Brickdoku
         Label lblStreak = new Label();
         // score label
         Label lblScore = new Label();
+        // score header label
+        Label lblDisplayScore = new Label();
 
 
         class Shape
@@ -231,9 +233,11 @@ namespace Brickdoku
                 {
                     for (int j = 0; j < shapes[generatedNumbers[i]].getSize(); j++)
                     {
-                        
-                        shapes[generatedNumbers[i]].getBlockAtIndex(j).BackColor = Color.Crimson;
-                        shapes[generatedNumbers[i]].getBlockAtIndex(j).ForeColor = Color.Crimson;
+                        if (placeable[i] == true)
+                        {
+                            shapes[generatedNumbers[i]].getBlockAtIndex(j).BackColor = Color.Crimson;
+                            shapes[generatedNumbers[i]].getBlockAtIndex(j).ForeColor = Color.Crimson;
+                        }
                     }
                 }
 
@@ -295,9 +299,17 @@ namespace Brickdoku
                 checkComplete();
                 displayStreakAndCombo(numberOfCompleted);
                 calculateScore(shape, numberOfCompleted, streak);
-
                 // Decrement the number of shapes and check for regeneration
                 numberOfShapes--;
+                for (int i = 0; i < 3; i++)
+                {
+                    if (shape != shapes[generatedNumbers[i]])
+                    {
+                        checkShapeFits(generatedNumbers[i]);
+                    }
+                }
+              
+
                 regenerateShapes();
             }
             else
@@ -532,7 +544,6 @@ namespace Brickdoku
             Controls.Add(lblStreak);
 
             // create a display score label
-            Label lblDisplayScore = new Label();
             lblDisplayScore.Font = new System.Drawing.Font("OCR A Extended", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             lblDisplayScore.Text = "Score";
             lblDisplayScore.ForeColor = System.Drawing.Color.Crimson;
@@ -551,10 +562,7 @@ namespace Brickdoku
         {
             // generate 3 random numbers and use that to generate three shapes
             // it seems to bug if two numbers are the same so need to check for that
-            for (int i = 0; i < 3; i++)
-            {
-                generatedNumbers[i] = -1;
-            }
+            numberNotPlaceable = 0;
             for (int i = 0; i < 3; i++)
             {
                 Random random = new Random();
@@ -574,8 +582,11 @@ namespace Brickdoku
                 // write randomly generated number to output
                 //Console.WriteLine("Random number: " + number);
                 generateShape(number, 100, 100 + (i * 150));
-                placeable[i] = checkShapeFits(number);
                 numberOfShapes++;
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                placeable[i] = checkShapeFits(generatedNumbers[i]);
             }
 
         }
@@ -862,6 +873,10 @@ namespace Brickdoku
                                 colourShape(number);
                             }
                             Console.WriteLine("true");
+                            if (numberNotPlaceable != 0)
+                            {
+                                numberNotPlaceable--;
+                            }
                             return true;
                         }
                     }
@@ -869,7 +884,13 @@ namespace Brickdoku
                 }
             }
             greyOutShape(number);
+            numberNotPlaceable++;
             Console.WriteLine("false");
+            if (numberNotPlaceable == numberOfShapes)
+            {
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                displayGameOverScreen();
+            }
             return false;
         }
 
@@ -902,6 +923,8 @@ namespace Brickdoku
         {
             hideGrid();
             hideShapes();
+            lblScore.Hide();
+            lblDisplayScore.Hide();
 
             Label lblGameOver = new Label();
             Controls.Add(lblGameOver);
@@ -915,13 +938,30 @@ namespace Brickdoku
             btnPlayAgain.Text = "Play Again";
             btnPlayAgain.BackColor = Color.LightPink;
             btnPlayAgain.SetBounds(250, 300, 200, 150);
+            btnPlayAgain.Click += (sender, e) => BtnPlayAgain_Click(sender, e, lblGameOver, btnPlayAgain, BtnExit);
             Button btnExit = new Button();
             Controls.Add(btnExit);
             btnExit.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             btnExit.Text = "Exit";
             btnExit.BackColor = Color.LightPink;
             btnExit.SetBounds(550, 300, 200, 150);
+            btnExit.Click += new EventHandler(this.BtnExit_Click);
+            btnPlayAgain.Click += (sender, e) => BtnPlayAgain_Click(sender, e, lblGameOver, btnPlayAgain, btnExit);
 
+        }
+
+        private void BtnPlayAgain_Click(object sender, EventArgs e, Label lblGameOver,Button btnPlayAgain, Button btnExit)
+        {
+            // when start button is clicked, hide all the items in the current menu screen
+            // and display the grid game form
+            btnExit.Hide();
+            btnPlayAgain.Hide();
+            lblGameOver.Hide();
+            this.BackColor = Color.Linen;
+            createGrid();
+            setUpLabels();
+            InitialiseGridOccupancy();
+            placeShapes();
         }
         void hideGrid()
         {
