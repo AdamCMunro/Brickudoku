@@ -31,6 +31,9 @@ namespace Brickdoku
         private bool dragging = false;
         private Shape draggedShape = null;
         private Point offset;
+        int score = 0;
+        int numberOfCompleted;
+        int streak = 0;
 
         bool[,] gridOccupied = new bool[9, 9]; //keep track of the occupied grid squares
 
@@ -38,6 +41,8 @@ namespace Brickdoku
         Label lblCombination = new Label();
         // label to display streaks
         Label lblStreak = new Label();
+        // score label
+        Label lblScore = new Label();
 
 
         class Shape
@@ -79,7 +84,6 @@ namespace Brickdoku
                 return size;
             }
 
-            // sometimes errors here
             public int getXOffset(int i)
             {
                 return xOffsetData[i];
@@ -169,7 +173,6 @@ namespace Brickdoku
                 block.MouseUp += new MouseEventHandler(this.btnEvent_MouseUp);
 
             }
-            //Console.WriteLine("Shape generated");
         }
 
         private void InitialiseGridOccupancy()
@@ -179,17 +182,6 @@ namespace Brickdoku
                 for (int j = 0; j < 9; j++)
                 {
                     gridOccupied[i, j] = false;
-                }
-            }
-        }
-
-        private void MarkGridOccupied(int startX, int startY, int width, int height)
-        {
-            for (int i = startX; i < startX + width; i++)
-            {
-                for (int j = startY; j < startY + height; j++)
-                {
-                    gridOccupied[i, j] = true;
                 }
             }
         }
@@ -234,25 +226,17 @@ namespace Brickdoku
             // if left mouse button is pressed
             if (e.Button == MouseButtons.Left)
             {
-                // set colour of clicked shape to be dark red
-                selectedShape = int.Parse(((Button)sender).Text); // on click, selected shape is set to the index 
+                // change any previously clicked shapes to be back to normal colour
                 for (int i = 0; i < generatedNumbers.Length; i++)
                 {
                     for (int j = 0; j < shapes[generatedNumbers[i]].getSize(); j++)
                     {
-                        // change any previously clicked shapes to be back to normal
+                        
                         shapes[generatedNumbers[i]].getBlockAtIndex(j).BackColor = Color.Crimson;
                         shapes[generatedNumbers[i]].getBlockAtIndex(j).ForeColor = Color.Crimson;
                     }
                 }
 
-                for (int i = 0; i < shapes[selectedShape].getSize(); i++)
-                {
-                    // change current shape to be dark red
-                    shapes[selectedShape].getBlockAtIndex(i).BackColor = Color.DarkRed;
-                    shapes[selectedShape].getBlockAtIndex(i).ForeColor = Color.DarkRed;
-
-                }
                 dragging = true; //set dragging flag to true
 
                 // Find the shape containing the button
@@ -275,6 +259,13 @@ namespace Brickdoku
                         break;
                     }
                 }
+                // change current shape to be dark red
+                for (int i = 0; i < foundShape.getSize(); i++)
+                {
+                    foundShape.getBlockAtIndex(i).BackColor = Color.DarkRed;
+                    foundShape.getBlockAtIndex(i).ForeColor = Color.DarkRed;
+
+                }
                 draggedShape = foundShape; // set the found shape as the dragged shape
                 offset = new Point(e.X, e.Y); //set the initial offset for dragging
             }
@@ -293,8 +284,6 @@ namespace Brickdoku
                     // Change the color of the grid squares underneath the shape
                     ChangeGridColor(button);
 
-                    // for testing generated numbers
-                    int[] generatedNumbers = { 1, 2, 3 };
                     // Make the original shape disappear
                     button.Visible = false;
                     Controls.Remove(button);
@@ -302,11 +291,12 @@ namespace Brickdoku
                     button.MouseMove -= new MouseEventHandler(this.btnEvent_MouseMove);
                     button.MouseUp -= new MouseEventHandler(this.btnEvent_MouseUp);
                 }
-                // for testing
-                //displayGridOccupied();
-                checkComplete();
 
-                // Decrement the number of shapes
+                checkComplete();
+                displayStreakAndCombo(numberOfCompleted);
+                calculateScore(shape, numberOfCompleted, streak);
+
+                // Decrement the number of shapes and check for regeneration
                 numberOfShapes--;
                 regenerateShapes();
             }
@@ -317,6 +307,41 @@ namespace Brickdoku
             }
         }
 
+        
+        /**
+         * Calculate and display streak and combination information
+         */
+        void displayStreakAndCombo(int numberOfCompleted)
+        {
+            if (numberOfCompleted > 0)
+            {
+                streak++;
+            }
+            else
+            {
+                streak = 0;
+            }
+            // display streak bonus
+            if (streak > 1)
+            {
+                lblStreak.Text = "x " + streak.ToString() + " streak!";
+                lblStreak.Visible = true;
+                // add in time delay - got from this link - https://stackoverflow.com/questions/5424667/alternatives-to-thread-sleep?rq=3
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                lblStreak.Visible = false;
+            }
+
+            // display combination bonus
+            if (numberOfCompleted > 1)
+            {
+                Console.WriteLine(numberOfCompleted.ToString());
+                lblCombination.Text = "x " + numberOfCompleted.ToString() + " combo!";
+                lblCombination.Visible = true;
+                // add in time delay - got from this link - https://stackoverflow.com/questions/5424667/alternatives-to-thread-sleep?rq=3
+                new System.Threading.ManualResetEvent(false).WaitOne(5000);
+                lblCombination.Visible = false;
+            }
+        }
 
 
         // Change the color of the grid squares without placing the shape on the grid
@@ -417,22 +442,16 @@ namespace Brickdoku
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // required
         }
+
         public Form1()
         {
             InitializeComponent(); // Initialise the new item
             initialiseShapes();
-            playMusic();
-
-        }
-
-        /**
-         * Play music function
-         */
-        void playMusic()
-        {
-            // used this to help https://stackoverflow.com/questions/14491431/playing-wav-file-with-c-sharp
+            // used this to help with music https://stackoverflow.com/questions/14491431/playing-wav-file-with-c-sharp
             music.PlayLooping(); // play music in a loop
+
         }
 
         /**
@@ -454,27 +473,17 @@ namespace Brickdoku
                     }
                     else
                     {
-                        
-
                         btn[x, y].BackColor = palePink;
                     }
                     // btn[x, y].Text = Convert.ToString((x + 1) + "," + (y + 1)); for debugging purposes
-                    btn[x, y].Click += new EventHandler(this.btnEvent_Click);
                     Controls.Add(btn[x, y]);
                     //remove the hover over highlight by setting 
                     btn[x, y].Enabled = false;
                     // slow down the appearing of the grid slightly
                     System.Threading.Thread.Sleep(10);
-
-
                 }
             }
         }
-        void btnEvent_Click(object sender, EventArgs e) {
-
-            Console.WriteLine(((Button)sender).Text); // SAME handler asbefore
-        }
-
 
         private void Form1_Load_1(object sender, EventArgs e)
         {
@@ -489,13 +498,6 @@ namespace Brickdoku
             BtnStart.Hide();
             this.BackgroundImage = null; // remove image from gameplay screen
             this.BackColor = Color.Linen;
-            // create a title label for the top of the screen
-            Label lblTitle = new Label();
-            Controls.Add(lblTitle);
-            lblTitle.Font = new System.Drawing.Font("OCR A Extended", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            lblTitle.Text = "Brickudoku";
-            lblTitle.ForeColor = System.Drawing.Color.Crimson;
-            lblTitle.SetBounds(400, 10, 250, 40);
             createGrid();
             setUpLabels();
             InitialiseGridOccupancy();
@@ -507,6 +509,14 @@ namespace Brickdoku
          */
         void setUpLabels()
         {
+            // create a title label for the top of the screen
+            Label lblTitle = new Label();
+            Controls.Add(lblTitle);
+            lblTitle.Font = new System.Drawing.Font("OCR A Extended", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblTitle.Text = "Brickudoku";
+            lblTitle.ForeColor = System.Drawing.Color.Crimson;
+            lblTitle.SetBounds(400, 10, 250, 40);
+
             // combinations label
             lblCombination.Font = new System.Drawing.Font("OCR A Extended", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             lblCombination.ForeColor = System.Drawing.Color.Crimson;
@@ -520,9 +530,22 @@ namespace Brickdoku
             lblStreak.SetBounds(750, 150, 250, 40);
             lblStreak.Visible = false;
             Controls.Add(lblStreak);
-        }
 
-        
+            // create a display score label
+            Label lblDisplayScore = new Label();
+            lblDisplayScore.Font = new System.Drawing.Font("OCR A Extended", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblDisplayScore.Text = "Score";
+            lblDisplayScore.ForeColor = System.Drawing.Color.Crimson;
+            lblDisplayScore.SetBounds(780, 200, 250, 40);
+            Controls.Add(lblDisplayScore);
+
+            // add actual score label
+            lblScore.Font = new System.Drawing.Font("OCR A Extended", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblScore.Text = "0";
+            lblScore.ForeColor = System.Drawing.Color.Crimson;
+            lblScore.SetBounds(820, 250, 250, 40);
+            Controls.Add(lblScore);
+        }
 
         void placeShapes()
         {
@@ -568,27 +591,23 @@ namespace Brickdoku
                 //Console.WriteLine("Num shapes: " + numberOfShapes);
                 placeShapes();
             }
-            else
-            {
-                //Console.WriteLine("Num shapes: " + numberOfShapes);
-            }
         }
 
         /**
          * Function to check for a complete line or square
          * return whether anything was completed or not to keep track for streaks
          */
-        bool checkComplete()
+        void checkComplete()
         {
             // to store completed rows, columns and squares
-            // squares numbering
+            // how the squares are numbered:
             // 0 1 2 
             // 3 4 5
             // 6 7 8
             List<int> rows = new List<int>();
             List<int> columns = new List<int>();
             List<Tuple<int, int>> squares = new List<Tuple<int, int>>();
-            int numberOfCompleted = 0;
+            numberOfCompleted = 0;
             // check rows
             for (int y = 0; y < 9; y++)
             {
@@ -698,7 +717,7 @@ namespace Brickdoku
                 }
             }
 
-            for (int i = 0; i < rows.Count; i++)
+            /*for (int i = 0; i < rows.Count; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
@@ -706,12 +725,12 @@ namespace Brickdoku
                     // set colour to light pink original
                     btn[j, rows[i]].BackColor = midPink;
                 }
-            }
+            }*/
             for (int i = 0; i < rows.Count; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
-                    new System.Threading.ManualResetEvent(false).WaitOne(20);
+                    new System.Threading.ManualResetEvent(false).WaitOne(30);
                     gridOccupied[j, rows[i]] = false;
                     // set colour back to original
                     if ((rows[i] > 2 && rows[i] < 6 && (j < 3 || j > 5)) || (j > 2 && j < 6 && (rows[i] < 3 || rows[i] > 5)))
@@ -729,7 +748,7 @@ namespace Brickdoku
             {
                 for (int j = 0; j < 9; j++)
                 {
-                    new System.Threading.ManualResetEvent(false).WaitOne(20);
+                    new System.Threading.ManualResetEvent(false).WaitOne(30);
                     gridOccupied[columns[i], j] = false;
                     // set column colour back to original
                     if ((j > 2 && j < 6 && (columns[i] < 3 || columns[i] > 5)) || (columns[i] > 2 && columns[i] < 6 && (j < 3 || j > 5)))
@@ -746,7 +765,7 @@ namespace Brickdoku
             // change colours for all sqaures that are full
             for (int i = 0; i < squares.Count; i++)
             {
-                new System.Threading.ManualResetEvent(false).WaitOne(20);
+                new System.Threading.ManualResetEvent(false).WaitOne(30);
                 int x = squares[i].Item1;
                 int y = squares[i].Item2;
                 gridOccupied[x, y] = false;
@@ -759,49 +778,21 @@ namespace Brickdoku
                     btn[x, y].BackColor = palePink;
                 }
             }
-
-            // display combination bonus
-            if (numberOfCompleted > 1)
-            {
-                Console.WriteLine(numberOfCompleted.ToString());
-                lblCombination.Text = "x " + numberOfCompleted.ToString() + " combo!";
-                lblCombination.Visible = true;
-                // add in time delay - got from this link - https://stackoverflow.com/questions/5424667/alternatives-to-thread-sleep?rq=3
-                new System.Threading.ManualResetEvent(false).WaitOne(5000);
-                lblCombination.Visible = false;
-            }
-
-            // return whether anything was completed
-            if (numberOfCompleted == 0)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
         }
 
-        // to test grid occupied
-        void displayGridOccupied()
+        /**
+        * Take in the shape placed and calculate the score
+        * Also need the streak and combinations info
+        */
+        void calculateScore(Shape shape, int numComplete, int streak)
         {
-            for (int y = 0; y < 9; y++)
+            score += shape.getSize();
+            score += 18 * numComplete; // add completed/combo bonus
+            if (streak > 1)
             {
-                for (int x = 0; x < 9;x++)
-                {
-               
-                    if (gridOccupied[x, y] == true)
-                    {
-                        Console.Write("1  ");
-                    }
-                    else
-                    {
-                        Console.Write("0  ");
-                    }
-                    
-                }
-                Console.WriteLine(" "); // new line
+                score += 27; // add 27 for a streak bonus
             }
+            lblScore.Text = score.ToString();
         }
 
         private void BtnExit_Click(object sender, EventArgs e)
