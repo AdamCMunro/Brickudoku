@@ -1,6 +1,7 @@
 ﻿using Brickdoku.Properties;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -22,13 +23,20 @@ namespace Brickdoku
         const int generatedSize = 40;
         int numberOfShapes = 0;
         SoundPlayer music = new SoundPlayer(Properties.Resources.Brickudoku_Music);
-
+        Color palePink = ColorTranslator.FromHtml("#ffccd4"); // light pink sqaure colour
+        Color midPink = ColorTranslator.FromHtml("#ff99a8"); // light pink sqaure colour
         //added for grid interaction
         private bool dragging = false;
         private Shape draggedShape = null;
         private Point offset;
 
         bool[,] gridOccupied = new bool[9, 9]; //keep track of the occupied grid squares
+
+        // label to display combination
+        Label lblCombination = new Label();
+        // label to display streaks
+        Label lblStreak = new Label();
+
 
         class Shape
         {
@@ -159,7 +167,7 @@ namespace Brickdoku
                 block.MouseUp += new MouseEventHandler(this.btnEvent_MouseUp);
 
             }
-            Console.WriteLine("Shape generated");
+            //Console.WriteLine("Shape generated");
         }
 
         private void InitialiseGridOccupancy()
@@ -273,7 +281,7 @@ namespace Brickdoku
         // places the shape to grid, ensuring it aligns
         private void PlaceShapeToGrid(Shape shape)
         {
-            Console.WriteLine("Fully on grid? " + IsShapeFullyOnGrid(shape));
+            //Console.WriteLine("Fully on grid? " + IsShapeFullyOnGrid(shape));
             if (IsShapeFullyOnGrid(shape) == true)
             {
                 for (int i = 0; i < shape.getSize(); i++)
@@ -283,6 +291,7 @@ namespace Brickdoku
                     // Change the color of the grid squares underneath the shape
                     ChangeGridColor(button);
 
+                    // for testing generated numbers
                     int[] generatedNumbers = { 1, 2, 3 };
                     // Make the original shape disappear
                     button.Visible = false;
@@ -291,7 +300,9 @@ namespace Brickdoku
                     button.MouseMove -= new MouseEventHandler(this.btnEvent_MouseMove);
                     button.MouseUp -= new MouseEventHandler(this.btnEvent_MouseUp);
                 }
-                displayGridOccupied();
+                // for testing
+                //displayGridOccupied();
+                checkComplete();
 
                 // Decrement the number of shapes
                 numberOfShapes--;
@@ -441,7 +452,9 @@ namespace Brickdoku
                     }
                     else
                     {
-                        btn[x, y].BackColor = Color.LightPink;
+                        
+
+                        btn[x, y].BackColor = palePink;
                     }
                     // btn[x, y].Text = Convert.ToString((x + 1) + "," + (y + 1)); for debugging purposes
                     btn[x, y].Click += new EventHandler(this.btnEvent_Click);
@@ -473,6 +486,7 @@ namespace Brickdoku
             BtnExit.Hide();
             BtnStart.Hide();
             this.BackgroundImage = null; // remove image from gameplay screen
+            this.BackColor = Color.Linen;
             // create a title label for the top of the screen
             Label lblTitle = new Label();
             Controls.Add(lblTitle);
@@ -482,7 +496,28 @@ namespace Brickdoku
             lblTitle.SetBounds(400, 10, 250, 40);
             placeShapes();
             createGrid();
+            setUpLabels();
             InitialiseGridOccupancy();
+        }
+
+        /**
+         * Set information for the two labels needed for streaks and combinations
+         */
+        void setUpLabels()
+        {
+            // combinations label
+            lblCombination.Font = new System.Drawing.Font("OCR A Extended", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblCombination.ForeColor = System.Drawing.Color.Crimson;
+            lblCombination.SetBounds(750, 100, 250, 40);
+            lblCombination.Visible = false;
+            Controls.Add(lblCombination);
+
+            // streaks label
+            lblStreak.Font = new System.Drawing.Font("OCR A Extended", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblStreak.ForeColor = System.Drawing.Color.Crimson;
+            lblStreak.SetBounds(750, 150, 250, 40);
+            lblStreak.Visible = false;
+            Controls.Add(lblStreak);
         }
 
         
@@ -509,7 +544,7 @@ namespace Brickdoku
                 generatedNumbers[i] = number;
 
                 // write randomly generated number to output
-                Console.WriteLine("Random number: " + number);
+                //Console.WriteLine("Random number: " + number);
                 generateShape(number, 100, 100 + (i * 150), generatedNumbers);
                 numberOfShapes++;
             }
@@ -524,44 +559,30 @@ namespace Brickdoku
             // if there are no shapes, generate 3 new ones
             if (numberOfShapes == 0)
             {
-                Console.WriteLine("Num shapes: " + numberOfShapes);
+                //Console.WriteLine("Num shapes: " + numberOfShapes);
                 placeShapes();
             }
             else
             {
-                Console.WriteLine("Num shapes: " + numberOfShapes);
+                //Console.WriteLine("Num shapes: " + numberOfShapes);
             }
         }
 
         /**
- * Function to check for a complete line or square
- */
-        void checkComplete()
+         * Function to check for a complete line or square
+         * return whether anything was completed or not to keep track for streaks
+         */
+        bool checkComplete()
         {
-            // remove column
-            // if any all i's or all j's are all complete, then there is a full line
-            for (int x = 0; x < 9; x++)
-            {
-                for (int y = 0; y < 9; y++)
-                {
-                    if (gridOccupied[x, y] == false)
-                    {
-                        Console.WriteLine("false" + x + "," + y);
-                        // if one in i, j is not occupied, then the whole line is not occupied
-                        continue; // go to next loop of i
-                    }
-                    if (y == 8)
-                    {
-                        Console.WriteLine("column: " + y + " fully occupied");
-                        // if j is 8, then everyhting in that column is occupied, so clear
-                        for (int k = 0; k < 9; k++)
-                        {
-                            gridOccupied[k, y] = false;
-                            // set colour back to original
-                        }
-                    }
-                }
-            }
+            // to store completed rows, columns and squares
+            // squares numbering
+            // 0 1 2 
+            // 3 4 5
+            // 6 7 8
+            List<int> rows = new List<int>();
+            List<int> columns = new List<int>();
+            List<Tuple<int, int>> squares = new List<Tuple<int, int>>();
+            int numberOfCompleted = 0;
             // check rows
             for (int y = 0; y < 9; y++)
             {
@@ -569,25 +590,189 @@ namespace Brickdoku
                 {
                     if (gridOccupied[x, y] == false)
                     {
-                        Console.WriteLine("false" + x + "," + y);
-                        // if one in i, j is not occupied, then the whole line is not occupied
-                        continue; // go to next loop of i
+                        //Console.WriteLine("false" + x + "," + y);
+                        // if one x is not occupied, then the whole line is not occupied
+                        break; // go to next row
                     }
-                    // if we reach x = 8 then there is a full row
+                    // if x is 8, then everyhting in that row is occupied, so clear
                     if (x == 8)
                     {
-                        Console.WriteLine("Row: " + x + " fully occupied");
-                        // if j is 8, then everyhting in that column is occupied, so clear
-                        for (int k = 0; k < 9; k++)
-                        {
-                            gridOccupied[k, y] = false;
-                            // set colour back to original
-                        }
+                        Console.WriteLine("row: " + y + " fully occupied");
+                        rows.Add(y);
+                        numberOfCompleted++;
+                    }
+                }
+            }
+            // check columns
+            for (int x = 0; x < 9; x++)
+            {
+                for (int y = 0; y < 9; y++)
+                {
+                    if (gridOccupied[x, y] == false)
+                    {
+                        //Console.WriteLine("false" + x + "," + y);
+                        // if one in column is not occupied, then we can break
+                        break;
+                    }
+                    // if we reach y = 8 then there is a full column
+                    if (y == 8)
+                    {
+                        Console.WriteLine("Column: " + x + " fully occupied");
+                        columns.Add(x);
+                        numberOfCompleted++;
                     }
                 }
             }
             // check for squares
+            // for each square 
+            for (int s = 0; s < 9; s++)
+            {
+                int occupiedSquares = 0;
+                // for each row in the square
+                for (int x = 0; x < 9; x++)
+                {
+                    // for squares 0,3,6 x < 2
+                    // if s is one of these values and x > 2, break
+                    if ((s == 0 || s == 3 || s == 6) && x > 2)
+                    {
+                        continue;
+                    }
+                    // for sqaures 1,4,7, x>2, x<6
+                    else if ((s == 1 || s == 4 || s == 7) && (x < 3 || x > 5))
+                    {
+                        continue;
+                    }
+                    // for sqaures 2,5,8 x > 5
+                    else if ((s == 2 || s == 5 || s == 8) && x < 6)
+                    {
+                        continue;
+                    }
+                    // for each column in the square
+                    for (int y = 0; y < 9; y++)
+                    {
+                        // for squares 0,1,2 y < 2
+                        // if s is one of these values and x > 2, break
+                        if ((s == 0 || s == 1 || s == 2) && y > 2)
+                        {
+                            continue;
+                        }
+                        // for sqaures 3,4,5, y>2, y<6
+                        else if ((s == 3 || s == 4 || s == 5) && (y < 3 || y > 5))
+                        {
+                            continue;
+                        }
+                        // for sqaures 6,7,8 y > 5
+                        else if ((s == 6 || s == 7 || s == 8) && y < 6)
+                        {
+                            continue;
+                        }
+                        // if any column in the square is unoccupied, break
+                        if (gridOccupied[x, y] == false)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            occupiedSquares++;
+                        }
+                        // if we have reach the end of x and y without breaking, the square is full
+                        if (occupiedSquares == 9)
+                        {
+                            Console.WriteLine("Sqaure " + s + " is full");
+                            for (int i = 0; i < 3; i++)
+                            {
+                                for (int j = 0; j < 3; j++)
+                                {
+                                    squares.Add(new Tuple<int, int>(x - i, y - j));
+                                }
+                            }
+                            numberOfCompleted++;
+                        }
+                    }
+                }
+            }
 
+            for (int i = 0; i < rows.Count; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    gridOccupied[j, rows[i]] = false;
+                    // set colour to light pink original
+                    btn[j, rows[i]].BackColor = midPink;
+                }
+            }
+            for (int i = 0; i < rows.Count; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    new System.Threading.ManualResetEvent(false).WaitOne(20);
+                    gridOccupied[j, rows[i]] = false;
+                    // set colour back to original
+                    if ((rows[i] > 2 && rows[i] < 6 && (j < 3 || j > 5)) || (j > 2 && j < 6 && (rows[i] < 3 || rows[i] > 5)))
+                    {
+                        btn[j, rows[i]].BackColor = Color.White;
+                    }
+                    else
+                    {
+                        btn[j, rows[i]].BackColor = palePink;
+                    }
+                }
+            }
+            // change colours for all columns that are full
+            for (int i = 0; i < columns.Count; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    new System.Threading.ManualResetEvent(false).WaitOne(20);
+                    gridOccupied[columns[i], j] = false;
+                    // set column colour back to original
+                    if ((j > 2 && j < 6 && (columns[i] < 3 || columns[i] > 5)) || (columns[i] > 2 && columns[i] < 6 && (j < 3 || j > 5)))
+                    {
+                        btn[columns[i], j].BackColor = Color.White;
+                    }
+                    else
+                    {
+                        btn[columns[i], j].BackColor = palePink;
+                    }
+                }
+            }
+
+            // change colours for all sqaures that are full
+            for (int i = 0; i < squares.Count; i++)
+            {
+                new System.Threading.ManualResetEvent(false).WaitOne(20);
+                int x = squares[i].Item1;
+                int y = squares[i].Item2;
+                gridOccupied[x, y] = false;
+                if ((x > 2 && x < 6 && y < 3) || (x < 3 && y > 2 && y < 6) || (x > 5 && y > 2 && y < 6) || (x > 2 && x < 6 && y > 5))
+                {
+                    btn[x, y].BackColor = Color.White;
+                }
+                else
+                {
+                    btn[x, y].BackColor = palePink;
+                }
+            }
+
+            // display combination bonus
+            if (numberOfCompleted > 1)
+            {
+                lblCombination.Text = "x " + numberOfCompleted.ToString() + " combo!";
+                lblCombination.Visible = true;
+                // add in time delay - got from this link - https://stackoverflow.com/questions/5424667/alternatives-to-thread-sleep?rq=3
+                new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                lblCombination.Visible = false;
+            }
+
+            // return whether anything was completed
+            if (numberOfCompleted == 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         // to test grid occupied
