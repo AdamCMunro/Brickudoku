@@ -22,6 +22,8 @@ namespace Brickdoku
         int selectedShape = -1;
         const int generatedSize = 50;
         int numberOfShapes = 0;
+        int[] generatedNumbers = { -1, -1, -1 };
+        bool[] placeable = new bool[] { true, true, true };
         SoundPlayer music = new SoundPlayer(Properties.Resources.Brickudoku_Music);
         Color palePink = ColorTranslator.FromHtml("#ffccd4"); // light pink sqaure colour
         Color midPink = ColorTranslator.FromHtml("#ff99a8"); // light pink sqaure colour
@@ -142,7 +144,7 @@ namespace Brickdoku
             shapes[47] = new Shape(5, new int[] { 0, -(generatedSize), -(generatedSize), generatedSize, generatedSize }, new int[] { 0, 0, -(generatedSize), 0, -(generatedSize) }); // 'C' shape rotated 270 degrees
         }
 
-        void generateShape(int index, int x, int y, int[] generatedNumbers) // creates a shape using the data in the shapes array
+        void generateShape(int index, int x, int y) // creates a shape using the data in the shapes array
         {
             for (int i = 0; i < shapes[index].getSize(); i++) // creates a button for each block required to make the shape
             {
@@ -162,7 +164,7 @@ namespace Brickdoku
                 block.BringToFront();
 
                 //event handlers for drag and drop
-                block.MouseDown += new MouseEventHandler((sender, e) => btnEvent_MouseDown(sender, e, generatedNumbers));
+                block.MouseDown += new MouseEventHandler(this.btnEvent_MouseDown);
                 block.MouseMove += new MouseEventHandler(this.btnEvent_MouseMove);
                 block.MouseUp += new MouseEventHandler(this.btnEvent_MouseUp);
 
@@ -227,7 +229,7 @@ namespace Brickdoku
         }
         //
         //used in dragging and dropping the shapes
-        private void btnEvent_MouseDown(object sender, MouseEventArgs e, int[] generatedNumbers)
+        private void btnEvent_MouseDown(object sender, MouseEventArgs e)
         {
             // if left mouse button is pressed
             if (e.Button == MouseButtons.Left)
@@ -296,7 +298,7 @@ namespace Brickdoku
                     // Make the original shape disappear
                     button.Visible = false;
                     Controls.Remove(button);
-                    button.MouseDown -= new MouseEventHandler((sender, e) => btnEvent_MouseDown(sender, e, generatedNumbers));
+                    button.MouseDown -= new MouseEventHandler(this.btnEvent_MouseDown);
                     button.MouseMove -= new MouseEventHandler(this.btnEvent_MouseMove);
                     button.MouseUp -= new MouseEventHandler(this.btnEvent_MouseUp);
                 }
@@ -494,10 +496,10 @@ namespace Brickdoku
             lblTitle.Text = "Brickudoku";
             lblTitle.ForeColor = System.Drawing.Color.Crimson;
             lblTitle.SetBounds(400, 10, 250, 40);
-            placeShapes();
             createGrid();
             setUpLabels();
             InitialiseGridOccupancy();
+            placeShapes();
         }
 
         /**
@@ -526,7 +528,10 @@ namespace Brickdoku
         {
             // generate 3 random numbers and use that to generate three shapes
             // it seems to bug if two numbers are the same so need to check for that
-            int[] generatedNumbers = new int[3];
+            for (int i = 0; i < 3; i++)
+            {
+                generatedNumbers[i] = -1;
+            }
             for (int i = 0; i < 3; i++)
             {
                 Random random = new Random();
@@ -545,7 +550,8 @@ namespace Brickdoku
 
                 // write randomly generated number to output
                 //Console.WriteLine("Random number: " + number);
-                generateShape(number, 100, 100 + (i * 150), generatedNumbers);
+                generateShape(number, 100, 100 + (i * 150));
+                placeable[i] = checkShapeFits(number);
                 numberOfShapes++;
             }
 
@@ -757,10 +763,11 @@ namespace Brickdoku
             // display combination bonus
             if (numberOfCompleted > 1)
             {
+                Console.WriteLine(numberOfCompleted.ToString());
                 lblCombination.Text = "x " + numberOfCompleted.ToString() + " combo!";
                 lblCombination.Visible = true;
                 // add in time delay - got from this link - https://stackoverflow.com/questions/5424667/alternatives-to-thread-sleep?rq=3
-                new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                new System.Threading.ManualResetEvent(false).WaitOne(5000);
                 lblCombination.Visible = false;
             }
 
@@ -833,6 +840,117 @@ namespace Brickdoku
                 catch (System.IO.FileNotFoundException)
                 {
                     Console.WriteLine("Error finding image!");
+                }
+            }
+        }
+
+        bool checkShapeFits(int number)
+        {
+            int xMod;
+            int yMod;
+            int count = 0;
+
+            for (int x = 0; x < 9; x++)
+            {
+                for (int y = 0; y < 9; y++)
+                {
+                    for (int i = 0; i < shapes[number].getSize(); i++)
+                    {
+
+                        xMod = shapes[number].getXOffset(i) / generatedSize;
+                        yMod = shapes[number].getYOffset(i) / generatedSize;
+
+                        if (x + xMod >= 0 && x + xMod < 9 && y + yMod >= 0 && y + yMod < 9 && !gridOccupied[x + xMod, y + yMod])
+                        {
+                            count++;
+                        }
+                        if (count == shapes[number].getSize())
+                        {
+                            if (shapes[number].getBlockAtIndex(0).BackColor == Color.Gray)
+                            {
+                                colourShape(number);
+                            }
+                            Console.WriteLine("true");
+                            return true;
+                        }
+                    }
+                    count = 0;
+                }
+            }
+            greyOutShape(number);
+            Console.WriteLine("false");
+            return false;
+        }
+
+        void greyOutShape(int index)
+        {
+            for (int i = 0; i < shapes[index].getSize(); i++)
+            {
+                Console.WriteLine("grey");
+                shapes[index].getBlockAtIndex(i).BackColor = Color.Gray;
+                shapes[index].getBlockAtIndex(i).ForeColor = Color.Gray;
+                shapes[index].getBlockAtIndex(i).MouseMove -= btnEvent_MouseMove;
+                shapes[index].getBlockAtIndex(i).MouseUp -= btnEvent_MouseUp;
+                shapes[index].getBlockAtIndex(i).MouseDown -= btnEvent_MouseDown;
+            }
+        }
+
+        void colourShape(int index)
+        {
+            for (int i = 0; i < shapes[index].getSize(); i++)
+            {
+                shapes[index].getBlockAtIndex(i).BackColor = Color.Crimson;
+                shapes[index].getBlockAtIndex(i).ForeColor = Color.Crimson;
+                shapes[index].getBlockAtIndex(i).MouseMove += btnEvent_MouseMove;
+                shapes[index].getBlockAtIndex(i).MouseUp += btnEvent_MouseUp;
+                shapes[index].getBlockAtIndex(i).MouseDown += btnEvent_MouseDown;
+            }
+        }
+
+        void displayGameOverScreen()
+        {
+            hideGrid();
+            hideShapes();
+
+            Label lblGameOver = new Label();
+            Controls.Add(lblGameOver);
+            lblGameOver.Font = new System.Drawing.Font("OCR A Extended", 45F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblGameOver.Text = "GAME OVER";
+            lblGameOver.ForeColor = System.Drawing.Color.Crimson;
+            lblGameOver.SetBounds(320, 100, 500, 100);
+            Button btnPlayAgain = new Button();
+            Controls.Add(btnPlayAgain);
+            btnPlayAgain.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            btnPlayAgain.Text = "Play Again";
+            btnPlayAgain.BackColor = Color.LightPink;
+            btnPlayAgain.SetBounds(250, 300, 200, 150);
+            Button btnExit = new Button();
+            Controls.Add(btnExit);
+            btnExit.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            btnExit.Text = "Exit";
+            btnExit.BackColor = Color.LightPink;
+            btnExit.SetBounds(550, 300, 200, 150);
+
+        }
+        void hideGrid()
+        {
+            for (int x = 0; x < 9; x++)
+            {
+                for (int y = 0; y < 9; y++)
+                {
+                    btn[x, y].Hide();
+                }
+            }
+        }
+
+        void hideShapes()
+        {
+            for (int i = 0; i < generatedNumbers.Length; i++)
+            {
+                Shape shape = shapes[generatedNumbers[i]];
+                for (int j = 0; j < shape.getSize(); j++)
+                {
+                    shape.getBlockAtIndex(j).Hide();
                 }
             }
         }
