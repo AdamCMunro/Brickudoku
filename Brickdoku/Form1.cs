@@ -31,6 +31,7 @@ namespace Brickdoku
         private bool dragging = false;
         private Shape draggedShape = null;
         private Point offset;
+
         int score = 0;
         int numberOfCompleted;
         int streak = 0;
@@ -350,7 +351,7 @@ namespace Brickdoku
                 lblCombination.Text = "x " + numberOfCompleted.ToString() + " combo!";
                 lblCombination.Visible = true;
                 // add in time delay - got from this link - https://stackoverflow.com/questions/5424667/alternatives-to-thread-sleep?rq=3
-                new System.Threading.ManualResetEvent(false).WaitOne(5000);
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
                 lblCombination.Visible = false;
             }
         }
@@ -566,7 +567,7 @@ namespace Brickdoku
             for (int i = 0; i < 3; i++)
             {
                 Random random = new Random();
-                int number = random.Next(38); // generate random number < 38
+                int number = random.Next(48); // generate random number < 38
                 // check number is not already in list of already generated and remove if it is
                 // not allowing 33 just now as it is bugging
                 while (generatedNumbers.Contains(number) || number == 33)
@@ -580,7 +581,7 @@ namespace Brickdoku
                 generatedNumbers[i] = number;
 
                 // write randomly generated number to output
-                //Console.WriteLine("Random number: " + number);
+                Console.WriteLine("Random number: " + number);
                 generateShape(number, 100, 100 + (i * 150));
                 numberOfShapes++;
             }
@@ -599,9 +600,10 @@ namespace Brickdoku
             // if there are no shapes, generate 3 new ones
             if (numberOfShapes == 0)
             {
-                //Console.WriteLine("Num shapes: " + numberOfShapes);
+                
                 placeShapes();
             }
+            Console.WriteLine("Num shapes: " + numberOfShapes);
         }
 
         /**
@@ -925,28 +927,34 @@ namespace Brickdoku
             hideShapes();
             lblScore.Hide();
             lblDisplayScore.Hide();
-
+            //Button btnExit = new Button();
             Label lblGameOver = new Label();
-            Controls.Add(lblGameOver);
-            lblGameOver.Font = new System.Drawing.Font("OCR A Extended", 45F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            lblGameOver.Text = "GAME OVER";
-            lblGameOver.ForeColor = System.Drawing.Color.Crimson;
-            lblGameOver.SetBounds(320, 100, 500, 100);
             Button btnPlayAgain = new Button();
-            Controls.Add(btnPlayAgain);
-            btnPlayAgain.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            btnPlayAgain.Text = "Play Again";
-            btnPlayAgain.BackColor = Color.LightPink;
-            btnPlayAgain.SetBounds(250, 300, 200, 150);
-            btnPlayAgain.Click += (sender, e) => BtnPlayAgain_Click(sender, e, lblGameOver, btnPlayAgain, BtnExit);
             Button btnExit = new Button();
+
             Controls.Add(btnExit);
             btnExit.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             btnExit.Text = "Exit";
             btnExit.BackColor = Color.LightPink;
             btnExit.SetBounds(550, 300, 200, 150);
             btnExit.Click += new EventHandler(this.BtnExit_Click);
+
+            Controls.Add(lblGameOver);
+            lblGameOver.Font = new System.Drawing.Font("OCR A Extended", 45F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblGameOver.Text = "GAME OVER";
+            lblGameOver.ForeColor = System.Drawing.Color.Crimson;
+            lblGameOver.SetBounds(320, 100, 500, 100);
+
+            
+            Controls.Add(btnPlayAgain);
+            btnPlayAgain.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            btnPlayAgain.Text = "Play Again";
+            btnPlayAgain.BackColor = Color.LightPink;
+            btnPlayAgain.SetBounds(250, 300, 200, 150);
             btnPlayAgain.Click += (sender, e) => BtnPlayAgain_Click(sender, e, lblGameOver, btnPlayAgain, btnExit);
+
+            
+            
 
         }
 
@@ -957,9 +965,44 @@ namespace Brickdoku
             btnExit.Hide();
             btnPlayAgain.Hide();
             lblGameOver.Hide();
+            InitialiseGridOccupancy(); // reset occupancy
             this.BackColor = Color.Linen;
-            createGrid();
-            setUpLabels();
+            // remove shapes from previous game
+            // make playable again
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    // redisplay grid with correct colours
+                    if ((x > 2 && x < 6 && y < 3) || (x < 3 && y > 2 && y < 6) || (x > 5 && y > 2 && y < 6) || (x > 2 && x < 6 && y > 5))
+                    {
+                        btn[x, y].BackColor = Color.White;
+                    }
+                    else
+                    {
+                        btn[x, y].BackColor = palePink;
+                    }
+                    btn[x, y].Show();
+                }
+            }
+            // reset all placeable to true
+            for (int i = 0; i < placeable.Length; i++)
+            {
+                placeable[i] = true;
+            }
+            numberOfShapes = 0;
+            for (int i = 0; i < generatedNumbers.Length; i++)
+            {
+                generatedNumbers[i] = -1;
+            }
+            score = 0;
+            streak = 0;
+            dragging = false;
+            draggedShape = null;
+            numberOfCompleted = 0;
+            lblScore.Text = "0";
+            lblScore.Show();
+            lblDisplayScore.Show();
             InitialiseGridOccupancy();
             placeShapes();
         }
@@ -981,7 +1024,15 @@ namespace Brickdoku
                 Shape shape = shapes[generatedNumbers[i]];
                 for (int j = 0; j < shape.getSize(); j++)
                 {
-                    shape.getBlockAtIndex(j).Hide();
+                    // if not already hidden, hide
+                    if (shape.getBlockAtIndex(j).Visible == true)
+                    {
+                        shape.getBlockAtIndex(j).Visible = false;
+                        Controls.Remove(shape.getBlockAtIndex(j));
+                        shape.getBlockAtIndex(j).MouseMove -= new MouseEventHandler(this.btnEvent_MouseMove);
+                        shape.getBlockAtIndex(j).MouseUp -= new MouseEventHandler(this.btnEvent_MouseUp);
+                        shape.getBlockAtIndex(j).MouseUp -= new MouseEventHandler(this.btnEvent_MouseDown);
+                    }
                 }
             }
         }
