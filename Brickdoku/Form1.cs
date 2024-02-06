@@ -19,7 +19,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Brickdoku
 {
-    public partial class Form1 : Form
+    public partial class Brickudoku : Form
     {
         Button[,] btn = new Button[9, 9]; // Create 2D array of button
         const int generatedSize = 50;
@@ -485,7 +485,7 @@ namespace Brickdoku
             // required
         }
 
-        public Form1()
+        public Brickudoku()
         {
             InitializeComponent(); // Initialise the new item
             initialiseShapes();
@@ -1141,6 +1141,22 @@ namespace Brickdoku
                     }
                 }
             }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult result;
+            result = MessageBox.Show("Brickudoku by Adam Munro, Marylou Das Chaagas e Silva and Laura Clark, 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void rulesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
         }
     }
 }
