@@ -23,6 +23,7 @@ namespace Brickdoku
         int numberOfShapes = 0;
         int[] generatedNumbers = { -1, -1, -1 };
         bool[] placeable = new bool[] { true, true, true };
+        bool[] placed = { false, false, false };
         int numberNotPlaceable = 0;
         SoundPlayer music = new SoundPlayer(Properties.Resources.Brickudoku_Music);
         Color palePink = ColorTranslator.FromHtml("#ffccd4"); // light pink sqaure colour
@@ -134,7 +135,7 @@ namespace Brickdoku
             shapes[30] = new Shape(5, new int[] { 0, -(generatedSize), -2 * (generatedSize), generatedSize, 2 * (generatedSize) }, new int[] { 0, 0, 0, 0, 0 }); // 1x5 horizontal
             shapes[31] = new Shape(5, new int[] { 0, 0, 0, 0, 0 }, new int[] { 0, -(generatedSize), -2 * (generatedSize), generatedSize, 2 * (generatedSize) }); // 1x5 vertical
             shapes[32] = new Shape(5, new int[] { 0, 0, 0, -(generatedSize), generatedSize }, new int[] { 0, generatedSize, -(generatedSize), -(generatedSize), -(generatedSize) }); // 5 piece 'T' shape
-            shapes[33] = new Shape(5, new int[] { 0, generatedSize, generatedSize - (generatedSize), generatedSize }, new int[] { 0, generatedSize, -(generatedSize), 0, 0 }); // 5 piece 'T' shape rotated 90 degrees clockwise
+            shapes[33] = new Shape(5, new int[] { 0, generatedSize, generatedSize, - (generatedSize), generatedSize }, new int[] { 0, generatedSize, -(generatedSize), 0, 0 }); // 5 piece 'T' shape rotated 90 degrees clockwise
             shapes[34] = new Shape(5, new int[] { 0, 0, 0, -(generatedSize), generatedSize }, new int[] { 0, generatedSize, -(generatedSize), generatedSize, generatedSize }); // 5 piece 'T' shape rotated 180 degrees clockwise
             shapes[35] = new Shape(5, new int[] { 0, -(generatedSize), -(generatedSize), generatedSize, -(generatedSize) }, new int[] { 0, generatedSize, -(generatedSize), 0, 0 }); // 5 piece 'T' shape rotated 270 degrees clockwise
             shapes[36] = new Shape(5, new int[] { 0, 0, 0, generatedSize, 2 * (generatedSize) }, new int[] { 0, -(generatedSize), -2 * (generatedSize), 0, 0 }); // 5 piece 'L' shape
@@ -229,6 +230,7 @@ namespace Brickdoku
             // if left mouse button is pressed
             if (e.Button == MouseButtons.Left)
             {
+                Console.WriteLine("help");
                 // change any previously clicked shapes to be back to normal colour
                 for (int i = 0; i < generatedNumbers.Length; i++)
                 {
@@ -282,6 +284,14 @@ namespace Brickdoku
             //Console.WriteLine("Fully on grid? " + IsShapeFullyOnGrid(shape));
             if (IsShapeFullyOnGrid(shape) == true)
             {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (generatedNumbers[j] == Int32.Parse(shape.getBlockAtIndex(0).Text))
+                    {
+                        placed[j] = true;
+                        break;
+                    }
+                }
                 for (int i = 0; i < shape.getSize(); i++)
                 {
                     Button button = shape.getBlockAtIndex(i);
@@ -304,13 +314,13 @@ namespace Brickdoku
                 numberOfShapes--;
                 for (int i = 0; i < 3; i++)
                 {
-                    if (shape != shapes[generatedNumbers[i]])
+                    // remove the shape we have placed from the generated numbers array by resestting to zero
+                   if (placed[i] == false)
                     {
-                        checkShapeFits(generatedNumbers[i]);
+                        Console.WriteLine("Checking");
+                        placeable[i] = checkShapeFits(generatedNumbers[i]);
                     }
                 }
-              
-
                 regenerateShapes();
             }
             else
@@ -450,7 +460,7 @@ namespace Brickdoku
                 button.Location = new Point(button.Location.X - offsetX, button.Location.Y - offsetY);
             }
         
-}
+        }
 
 
         private void Form1_Load(object sender, EventArgs e)
@@ -566,11 +576,12 @@ namespace Brickdoku
             numberNotPlaceable = 0;
             for (int i = 0; i < 3; i++)
             {
+                placed[i] = false;
                 Random random = new Random();
                 int number = random.Next(48); // generate random number < 38
                 // check number is not already in list of already generated and remove if it is
                 // not allowing 33 just now as it is bugging
-                while (generatedNumbers.Contains(number) || number == 33)
+                while (generatedNumbers.Contains(number))
                 {
                     // if it already contains the number generate a new number till a unique one is found
                     random = new Random();
@@ -585,6 +596,7 @@ namespace Brickdoku
                 generateShape(number, 100, 100 + (i * 150));
                 numberOfShapes++;
             }
+            // check shape fits for all generated numbers
             for (int i = 0; i < 3; i++)
             {
                 placeable[i] = checkShapeFits(generatedNumbers[i]);
@@ -600,10 +612,8 @@ namespace Brickdoku
             // if there are no shapes, generate 3 new ones
             if (numberOfShapes == 0)
             {
-                
                 placeShapes();
             }
-            Console.WriteLine("Num shapes: " + numberOfShapes);
         }
 
         /**
@@ -730,15 +740,6 @@ namespace Brickdoku
                 }
             }
 
-            /*for (int i = 0; i < rows.Count; i++)
-            {
-                for (int j = 0; j < 9; j++)
-                {
-                    gridOccupied[j, rows[i]] = false;
-                    // set colour to light pink original
-                    btn[j, rows[i]].BackColor = midPink;
-                }
-            }*/
             for (int i = 0; i < rows.Count; i++)
             {
                 for (int j = 0; j < 9; j++)
@@ -848,6 +849,9 @@ namespace Brickdoku
             }
         }
 
+        /**
+         * Check if a shape fits on the grid
+         */
         bool checkShapeFits(int number)
         {
             int xMod;
@@ -858,6 +862,7 @@ namespace Brickdoku
             {
                 for (int y = 0; y < 9; y++)
                 {
+                    // for every block of the generated shape;
                     for (int i = 0; i < shapes[number].getSize(); i++)
                     {
 
@@ -888,6 +893,8 @@ namespace Brickdoku
             greyOutShape(number);
             numberNotPlaceable++;
             Console.WriteLine("false");
+            Console.WriteLine("Number not placeable: " + numberNotPlaceable);
+            Console.WriteLine("Number of shapes: " + numberOfShapes);
             if (numberNotPlaceable == numberOfShapes)
             {
                 new System.Threading.ManualResetEvent(false).WaitOne(2000);
@@ -927,17 +934,9 @@ namespace Brickdoku
             hideShapes();
             lblScore.Hide();
             lblDisplayScore.Hide();
-            //Button btnExit = new Button();
             Label lblGameOver = new Label();
             Button btnPlayAgain = new Button();
             Button btnExit = new Button();
-
-            Controls.Add(btnExit);
-            btnExit.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            btnExit.Text = "Exit";
-            btnExit.BackColor = Color.LightPink;
-            btnExit.SetBounds(550, 300, 200, 150);
-            btnExit.Click += new EventHandler(this.BtnExit_Click);
 
             Controls.Add(lblGameOver);
             lblGameOver.Font = new System.Drawing.Font("OCR A Extended", 45F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -945,7 +944,6 @@ namespace Brickdoku
             lblGameOver.ForeColor = System.Drawing.Color.Crimson;
             lblGameOver.SetBounds(320, 100, 500, 100);
 
-            
             Controls.Add(btnPlayAgain);
             btnPlayAgain.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             btnPlayAgain.Text = "Play Again";
@@ -953,9 +951,12 @@ namespace Brickdoku
             btnPlayAgain.SetBounds(250, 300, 200, 150);
             btnPlayAgain.Click += (sender, e) => BtnPlayAgain_Click(sender, e, lblGameOver, btnPlayAgain, btnExit);
 
-            
-            
-
+            Controls.Add(btnExit);
+            btnExit.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            btnExit.Text = "Exit";
+            btnExit.BackColor = Color.LightPink;
+            btnExit.SetBounds(550, 300, 200, 150);
+            btnExit.Click += new EventHandler(this.BtnExit_Click);
         }
 
         private void BtnPlayAgain_Click(object sender, EventArgs e, Label lblGameOver,Button btnPlayAgain, Button btnExit)
