@@ -12,7 +12,6 @@ C:\Users\DELL\source\repos\Brickudoku\Brickdoku\bin\Debug\Brickdoku.exe.config
 C:\Users\DELL\source\repos\Brickudoku\Brickdoku\bin\Debug\Brickdoku.exe
 C:\Users\DELL\source\repos\Brickudoku\Brickdoku\bin\Debug\Brickdoku.pdb
 C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.csproj.AssemblyReference.cache
-C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.Form1.resources
 C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.Properties.Resources.resources
 C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.csproj.GenerateResource.cache
 C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.csproj.CoreCompileInputs.cache
@@ -58,3 +57,4 @@ C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdok
 C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdoku\obj\Debug\AxInterop.WMPLib.dll
 C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdoku\obj\Debug\Brickdoku.csproj.ResolveComReference.cache
 C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdoku\obj\Debug\Brickdoku.Brickudoku.resources
+C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.Brickudoku.resources
