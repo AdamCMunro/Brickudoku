@@ -323,8 +323,14 @@ namespace Brickdoku
             //Console.WriteLine("Fully on grid? " + IsShapeFullyOnGrid(shape));
             if (IsShapeFullyOnGrid(shape) == true)
             {
-                // Play the sound effect
-                pop.Play();
+                if (BtnMute.Text == "m") //play pop sound effect if not muted
+                {
+                    pop.Stop();
+                }
+                else
+                {
+                    pop.Play();
+                }
 
                 for (int j = 0; j < 3; j++)
                 {
@@ -407,7 +413,15 @@ namespace Brickdoku
                 // add in time delay - got from this link - https://stackoverflow.com/questions/24136390/thread-sleep-without-freezing-the-ui#:~:text=The%20simplest%20way%20to%20use,asynchronous%20add%20the%20async%20modifier.&text=Now%20you%20can%20use%20the,asynchronous%20tasks%2C%20in%20your%20case.
                 await Task.Delay(1500);
                 lblCombination.Visible = false;
-                points.Play();
+
+                if (BtnMute.Text == "m") //play streak/combo sound effect if not muted
+                {
+                    points.Stop();
+                }
+                else
+                {
+                    points.Play();
+                }
             }
         }
 
