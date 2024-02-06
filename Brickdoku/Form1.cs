@@ -12,7 +12,10 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.WebRequestMethods;
 using static System.Windows.Forms.AxHost;
+using static System.Windows.Forms.LinkLabel;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Brickdoku
 {
@@ -374,7 +377,7 @@ namespace Brickdoku
         /**
          * Calculate and display streak and combination information
          */
-        void displayStreakAndCombo(int numberOfCompleted)
+        async void displayStreakAndCombo(int numberOfCompleted)
         {
             if (numberOfCompleted > 0)
             {
@@ -389,8 +392,8 @@ namespace Brickdoku
             {
                 lblStreak.Text = "x " + streak.ToString() + " streak!";
                 lblStreak.Visible = true;
-                // add in time delay - got from this link - https://stackoverflow.com/questions/5424667/alternatives-to-thread-sleep?rq=3
-                new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                // add in time delay - got from this link - https://stackoverflow.com/questions/24136390/thread-sleep-without-freezing-the-ui#:~:text=The%20simplest%20way%20to%20use,asynchronous%20add%20the%20async%20modifier.&text=Now%20you%20can%20use%20the,asynchronous%20tasks%2C%20in%20your%20case.
+                await Task.Delay(1500);
                 lblStreak.Visible = false;
                 points.Play();
             }
@@ -401,8 +404,8 @@ namespace Brickdoku
                 Console.WriteLine(numberOfCompleted.ToString());
                 lblCombination.Text = "x " + numberOfCompleted.ToString() + " combo!";
                 lblCombination.Visible = true;
-                // add in time delay - got from this link - https://stackoverflow.com/questions/5424667/alternatives-to-thread-sleep?rq=3
-                new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                // add in time delay - got from this link - https://stackoverflow.com/questions/24136390/thread-sleep-without-freezing-the-ui#:~:text=The%20simplest%20way%20to%20use,asynchronous%20add%20the%20async%20modifier.&text=Now%20you%20can%20use%20the,asynchronous%20tasks%2C%20in%20your%20case.
+                await Task.Delay(1500);
                 lblCombination.Visible = false;
                 points.Play();
             }
@@ -859,7 +862,7 @@ namespace Brickdoku
         * Take in the shape placed and calculate the score
         * Also need the streak and combinations info
         */
-        void calculateScore(Shape shape, int numComplete, int streak)
+        async void calculateScore(Shape shape, int numComplete, int streak)
         {
             int score = 0;
             score += shape.getSize();
@@ -873,8 +876,8 @@ namespace Brickdoku
             {
                 lblScoreIncrease.Text = "+ " + score.ToString();
                 lblScoreIncrease.Visible = true;
-                // add in time delay - got from this link - https://stackoverflow.com/questions/5424667/alternatives-to-thread-sleep?rq=3
-                new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                // add in time delay - got from this link - https://stackoverflow.com/questions/24136390/thread-sleep-without-freezing-the-ui#:~:text=The%20simplest%20way%20to%20use,asynchronous%20add%20the%20async%20modifier.&text=Now%20you%20can%20use%20the,asynchronous%20tasks%2C%20in%20your%20case.
+                await Task.Delay(1000);
                 lblScoreIncrease.Visible = false;
             }
             totalScore += score;
