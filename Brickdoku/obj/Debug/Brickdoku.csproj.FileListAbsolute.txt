@@ -48,3 +48,8 @@ C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdok
 C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdoku\obj\Debug\Brickdoku.csproj.CoreCompileInputs.cache
 C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdoku\obj\Debug\Brickdoku.exe
 C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdoku\obj\Debug\Brickdoku.pdb
+C:\Users\DELL\source\repos\Brickudoku\Brickdoku\bin\Debug\Interop.WMPLib.dll
+C:\Users\DELL\source\repos\Brickudoku\Brickdoku\bin\Debug\AxInterop.WMPLib.dll
+C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Interop.WMPLib.dll
+C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\AxInterop.WMPLib.dll
+C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.csproj.ResolveComReference.cache
