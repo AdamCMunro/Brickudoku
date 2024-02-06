@@ -25,6 +25,9 @@ namespace Brickdoku
         bool[] placeable = new bool[] { true, true, true };
         bool[] placed = { false, false, false };
         int numberNotPlaceable = 0;
+        List<int> rows = new List<int>();
+        List<int> columns = new List<int>();
+        List<Tuple<int, int>> squares = new List<Tuple<int, int>>();
       
         //music and sound effects
         SoundPlayer background_music;
@@ -39,7 +42,7 @@ namespace Brickdoku
         private Shape draggedShape = null;
         private Point offset;
 
-        int score = 0;
+        int totalScore = 0;
         int numberOfCompleted;
         int streak = 0;
 
@@ -53,6 +56,8 @@ namespace Brickdoku
         Label lblScore = new Label();
         // score header label
         Label lblDisplayScore = new Label();
+        // score increase label
+        Label lblScoreIncrease = new Label();
 
 
         class Shape
@@ -346,9 +351,10 @@ namespace Brickdoku
                 calculateScore(shape, numberOfCompleted, streak);
                 // Decrement the number of shapes and check for regeneration
                 numberOfShapes--;
+                numberNotPlaceable = 0;
                 for (int i = 0; i < 3; i++)
                 {
-                    // remove the shape we have placed from the generated numbers array by resestting to zero
+                    // remove the shape we have  from the generated numbers array by resestting to zero
                    if (placed[i] == false)
                     {
                         Console.WriteLine("Checking");
@@ -538,7 +544,7 @@ namespace Brickdoku
             createGrid();
             setUpLabels();
             InitialiseGridOccupancy();
-            placeShapes();
+            generateRandomShapeNumbers();
         }
 
         /**
@@ -549,20 +555,20 @@ namespace Brickdoku
             // create a title label for the top of the screen
             Label lblTitle = new Label();
             Controls.Add(lblTitle);
-            lblTitle.Font = new System.Drawing.Font("OCR A Extended", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblTitle.Font = new System.Drawing.Font("OCR A Extended", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             lblTitle.Text = "Brickudoku";
             lblTitle.ForeColor = System.Drawing.Color.Crimson;
             lblTitle.SetBounds(400, 10, 250, 40);
 
             // combinations label
-            lblCombination.Font = new System.Drawing.Font("OCR A Extended", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblCombination.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             lblCombination.ForeColor = System.Drawing.Color.Crimson;
             lblCombination.SetBounds(750, 100, 250, 40);
             lblCombination.Visible = false;
             Controls.Add(lblCombination);
 
             // streaks label
-            lblStreak.Font = new System.Drawing.Font("OCR A Extended", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblStreak.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             lblStreak.ForeColor = System.Drawing.Color.Crimson;
             lblStreak.SetBounds(750, 150, 250, 40);
             lblStreak.Visible = false;
@@ -572,29 +578,39 @@ namespace Brickdoku
             lblDisplayScore.Font = new System.Drawing.Font("OCR A Extended", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             lblDisplayScore.Text = "Score";
             lblDisplayScore.ForeColor = System.Drawing.Color.Crimson;
-            lblDisplayScore.SetBounds(780, 200, 250, 40);
+            lblDisplayScore.SetBounds(780, 300, 250, 40);
             Controls.Add(lblDisplayScore);
 
             // add actual score label
             lblScore.Font = new System.Drawing.Font("OCR A Extended", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             lblScore.Text = "0";
             lblScore.ForeColor = System.Drawing.Color.Crimson;
-            lblScore.SetBounds(820, 250, 250, 40);
+            lblScore.SetBounds(820, 350, 250, 40);
             Controls.Add(lblScore);
+
+            // label for the score increase on that turn
+            lblScoreIncrease.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblScoreIncrease.Text = "";
+            lblScoreIncrease.ForeColor = System.Drawing.Color.Crimson;
+            lblScoreIncrease.SetBounds(820, 250, 250, 40);
+            lblScoreIncrease.Visible = false;
+            Controls.Add(lblScoreIncrease);
         }
 
-        void placeShapes()
+        /**
+         * Generate 3 random numbers to be used to generate 3 shapes
+         * Call function to generate shapes at the correct positions
+         */
+        void generateRandomShapeNumbers()
         {
             // generate 3 random numbers and use that to generate three shapes
-            // it seems to bug if two numbers are the same so need to check for that
-            numberNotPlaceable = 0;
+            numberNotPlaceable = 0; // reset back to 0
             for (int i = 0; i < 3; i++)
             {
                 placed[i] = false;
                 Random random = new Random();
-                int number = random.Next(48); // generate random number < 38
-                // check number is not already in list of already generated and remove if it is
-                // not allowing 33 just now as it is bugging
+                int number = random.Next(48); // generate random number < 48
+                // check number is not already in list of already generated
                 while (generatedNumbers.Contains(number))
                 {
                     // if it already contains the number generate a new number till a unique one is found
@@ -605,8 +621,8 @@ namespace Brickdoku
                 // add the number to the array so it is not used again
                 generatedNumbers[i] = number;
 
-                // write randomly generated number to output
-                Console.WriteLine("Random number: " + number);
+                //Console.WriteLine("Random number: " + number);
+                //
                 generateShape(number, 100, 80 + (i * 220));
                 numberOfShapes++;
             }
@@ -615,7 +631,6 @@ namespace Brickdoku
             {
                 placeable[i] = checkShapeFits(generatedNumbers[i]);
             }
-
         }
 
         /**
@@ -626,33 +641,36 @@ namespace Brickdoku
             // if there are no shapes, generate 3 new ones
             if (numberOfShapes == 0)
             {
-                placeShapes();
+                generateRandomShapeNumbers();
             }
         }
 
         /**
          * Function to check for a complete line or square
-         * return whether anything was completed or not to keep track for streaks
+         * Keep a list of rows, columns and sqaures that are complete
+         * Keep a total of how many were completed to check for streaks and comboss
          */
         void checkComplete()
         {
-            // to store completed rows, columns and squares
-            // how the squares are numbered:
-            // 0 1 2 
-            // 3 4 5
-            // 6 7 8
-            List<int> rows = new List<int>();
-            List<int> columns = new List<int>();
-            List<Tuple<int, int>> squares = new List<Tuple<int, int>>();
+            // clear rows, columns and squares
+            rows.Clear();
+            squares.Clear();
+            columns.Clear();
             numberOfCompleted = 0;
+
+            // lsit to store columns that we know are empty so we don't check twice
+            List<int> emptyColumns = new List<int>();
+
             // check rows
             for (int y = 0; y < 9; y++)
             {
                 for (int x = 0; x < 9; x++)
                 {
+                    //btn[x, y].BackColor = Color.LightGreen;
                     if (gridOccupied[x, y] == false)
                     {
-                        //Console.WriteLine("false" + x + "," + y);
+                        // column x must therefore also be empty so don't check it later
+                        emptyColumns.Add(x);
                         // if one x is not occupied, then the whole line is not occupied
                         break; // go to next row
                     }
@@ -668,8 +686,13 @@ namespace Brickdoku
             // check columns
             for (int x = 0; x < 9; x++)
             {
+                if (emptyColumns.Contains(x))
+                {
+                    continue;
+                }
                 for (int y = 0; y < 9; y++)
                 {
+                    //btn[x, y].BackColor = Color.Green;
                     if (gridOccupied[x, y] == false)
                     {
                         //Console.WriteLine("false" + x + "," + y);
@@ -687,73 +710,97 @@ namespace Brickdoku
             }
             // check for squares
             // for each square 
+            bool occupied; // to check whether one space of a square is occupied to avoid having to loop the whole square
             for (int s = 0; s < 9; s++)
             {
+                occupied = true;
                 int occupiedSquares = 0;
                 // for each row in the square
+
                 for (int x = 0; x < 9; x++)
                 {
-                    // for squares 0,3,6 x < 2
-                    // if s is one of these values and x > 2, break
-                    if ((s == 0 || s == 3 || s == 6) && x > 2)
+                    if (occupied == false)
                     {
-                        continue;
+                        break;
                     }
-                    // for sqaures 1,4,7, x>2, x<6
-                    else if ((s == 1 || s == 4 || s == 7) && (x < 3 || x > 5))
+                    else
                     {
-                        continue;
-                    }
-                    // for sqaures 2,5,8 x > 5
-                    else if ((s == 2 || s == 5 || s == 8) && x < 6)
-                    {
-                        continue;
-                    }
-                    // for each column in the square
-                    for (int y = 0; y < 9; y++)
-                    {
-                        // for squares 0,1,2 y < 2
-                        // if s is one of these values and x > 2, break
-                        if ((s == 0 || s == 1 || s == 2) && y > 2)
+                        // for squares 0,3,6 x < 2
+                        // if s is one of these values and x > 2, skip to next loop
+                        if ((s == 0 || s == 3 || s == 6) && x > 2)
                         {
                             continue;
                         }
-                        // for sqaures 3,4,5, y>2, y<6
-                        else if ((s == 3 || s == 4 || s == 5) && (y < 3 || y > 5))
+                        // for sqaures 1,4,7, x>2, x<6
+                        else if ((s == 1 || s == 4 || s == 7) && (x < 3 || x > 5))
                         {
                             continue;
                         }
-                        // for sqaures 6,7,8 y > 5
-                        else if ((s == 6 || s == 7 || s == 8) && y < 6)
+                        // for sqaures 2,5,8 x > 5
+                        else if ((s == 2 || s == 5 || s == 8) && x < 6)
                         {
                             continue;
                         }
-                        // if any column in the square is unoccupied, break
-                        if (gridOccupied[x, y] == false)
+                        // for each column in the square
+                        for (int y = 0; y < 9; y++)
                         {
-                            break;
-                        }
-                        else
-                        {
-                            occupiedSquares++;
-                        }
-                        // if we have reach the end of x and y without breaking, the square is full
-                        if (occupiedSquares == 9)
-                        {
-                            Console.WriteLine("Sqaure " + s + " is full");
-                            for (int i = 0; i < 3; i++)
+                            //btn[x, y].BackColor = Color.DarkGreen;
+                            // for squares 0,1,2 y < 2
+                            // if s is one of these values and x > 2, continue
+                            if ((s == 0 || s == 1 || s == 2) && y > 2)
                             {
-                                for (int j = 0; j < 3; j++)
-                                {
-                                    squares.Add(new Tuple<int, int>(x - i, y - j));
-                                }
+                                continue;
                             }
-                            numberOfCompleted++;
+                            // for sqaures 3,4,5, y>2, y<6
+                            else if ((s == 3 || s == 4 || s == 5) && (y < 3 || y > 5))
+                            {
+                                continue;
+                            }
+                            // for sqaures 6,7,8 y > 5
+                            else if ((s == 6 || s == 7 || s == 8) && y < 6)
+                            {
+                                continue;
+                            }
+                            // if any column in the square is unoccupied, break
+                            if (gridOccupied[x, y] == false)
+                            {
+                                occupied = false;
+                                break;
+                            }
+                            else
+                            {
+                                occupiedSquares++;
+                            }
+                            // if we have reach the end of x and y without breaking, the square is full
+                            if (occupiedSquares == 9)
+                            {
+                                Console.WriteLine("Sqaure " + s + " is full");
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    for (int j = 0; j < 3; j++)
+                                    {
+                                        squares.Add(new Tuple<int, int>(x - i, y - j));
+                                    }
+                                }
+                                numberOfCompleted++;
+                            }
                         }
                     }
                 }
             }
+            // if anything has been completed, remove completed
+            if (numberOfCompleted > 0)
+            {
+                removeCompleted();
+            }
+        }
 
+        /**
+         * Function to remove the completed rows once they have been found
+         */
+        void removeCompleted()
+        {
+            // colour rows
             for (int i = 0; i < rows.Count; i++)
             {
                 for (int j = 0; j < 9; j++)
@@ -814,13 +861,24 @@ namespace Brickdoku
         */
         void calculateScore(Shape shape, int numComplete, int streak)
         {
+            int score = 0;
             score += shape.getSize();
             score += 18 * numComplete; // add completed/combo bonus
             if (streak > 1)
             {
                 score += 27; // add 27 for a streak bonus
             }
-            lblScore.Text = score.ToString();
+            // if score is greater than zero, display label showing what it is increased by
+            if (score > 0)
+            {
+                lblScoreIncrease.Text = "+ " + score.ToString();
+                lblScoreIncrease.Visible = true;
+                // add in time delay - got from this link - https://stackoverflow.com/questions/5424667/alternatives-to-thread-sleep?rq=3
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                lblScoreIncrease.Visible = false;
+            }
+            totalScore += score;
+            lblScore.Text = totalScore.ToString();
         }
 
         private void BtnExit_Click(object sender, EventArgs e)
@@ -893,6 +951,7 @@ namespace Brickdoku
             int xMod;
             int yMod;
             int count = 0;
+            
 
             for (int x = 0; x < 9; x++)
             {
@@ -1004,7 +1063,6 @@ namespace Brickdoku
             lblGameOver.Hide();
             InitialiseGridOccupancy(); // reset occupancy
             this.BackColor = Color.Linen;
-            // remove shapes from previous game
             // make playable again
             for (int y = 0; y < 9; y++)
             {
@@ -1027,12 +1085,13 @@ namespace Brickdoku
             {
                 placeable[i] = true;
             }
-            numberOfShapes = 0;
+            // reset all generated numbers to 0
             for (int i = 0; i < generatedNumbers.Length; i++)
             {
                 generatedNumbers[i] = -1;
             }
-            score = 0;
+            numberOfShapes = 0;
+            totalScore = 0;
             streak = 0;
             dragging = false;
             draggedShape = null;
@@ -1041,8 +1100,12 @@ namespace Brickdoku
             lblScore.Show();
             lblDisplayScore.Show();
             InitialiseGridOccupancy();
-            placeShapes();
+            generateRandomShapeNumbers();
         }
+
+        /**
+         * Hide all buttons in the grid
+         */
         void hideGrid()
         {
             for (int x = 0; x < 9; x++)
@@ -1054,6 +1117,9 @@ namespace Brickdoku
             }
         }
 
+        /**
+         * Hide all shapes that were leftover at the end of the previous game
+         */
         void hideShapes()
         {
             for (int i = 0; i < generatedNumbers.Length; i++)

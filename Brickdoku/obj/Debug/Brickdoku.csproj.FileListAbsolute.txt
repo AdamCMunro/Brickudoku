@@ -53,3 +53,8 @@ C:\Users\DELL\source\repos\Brickudoku\Brickdoku\bin\Debug\AxInterop.WMPLib.dll
 C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Interop.WMPLib.dll
 C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\AxInterop.WMPLib.dll
 C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.csproj.ResolveComReference.cache
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdoku\bin\Debug\Interop.WMPLib.dll
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdoku\bin\Debug\AxInterop.WMPLib.dll
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdoku\obj\Debug\Interop.WMPLib.dll
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdoku\obj\Debug\AxInterop.WMPLib.dll
+C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdoku\obj\Debug\Brickdoku.csproj.ResolveComReference.cache
