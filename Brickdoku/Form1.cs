@@ -25,7 +25,13 @@ namespace Brickdoku
         bool[] placeable = new bool[] { true, true, true };
         bool[] placed = { false, false, false };
         int numberNotPlaceable = 0;
-        SoundPlayer music = new SoundPlayer(Properties.Resources.Brickudoku_Music);
+      
+        //music and sound effects
+        SoundPlayer background_music;
+        SoundPlayer pop = new SoundPlayer("pop_sound.wav"); //sound effect for placing shape on grid
+        SoundPlayer points = new SoundPlayer("points_sound.wav"); // sound effect for winning points
+        bool bgPlaying = false;
+
         Color palePink = ColorTranslator.FromHtml("#ffccd4"); // light pink sqaure colour
         Color midPink = ColorTranslator.FromHtml("#ff99a8"); // light pink sqaure colour
         //added for grid interaction
@@ -55,6 +61,28 @@ namespace Brickdoku
             Button[] blocks; // the array of blocks
             int[] yOffsetData; // an array storing how the blocks should be offset realtive to the central block along the x-axis
             int[] xOffsetData; // an array storing how the blocks should be offset realtive to the central block along the y-axis
+
+
+            private List<Point> initialPositions = new List<Point>(); //used to store the postions of the shapes
+            //method to store the initial positions
+            public void StoreInitialPositions()
+            {
+                initialPositions.Clear();
+                for (int i = 0; i < getSize(); i++)
+                {
+                    Button button = getBlockAtIndex(i);
+                    initialPositions.Add(button.Location);
+                }
+            }
+            // method to restore initial positions
+            public void RestoreInitialPositions()
+            {
+                for (int i = 0; i < getSize(); i++)
+                {
+                    Button button = getBlockAtIndex(i);
+                    button.Location = initialPositions[i];
+                }
+            }
 
             public Shape()
             {
@@ -176,6 +204,9 @@ namespace Brickdoku
                 block.MouseMove += new MouseEventHandler(this.btnEvent_MouseMove);
                 block.MouseUp += new MouseEventHandler(this.btnEvent_MouseUp);
 
+                // Add these lines to store and maintain the initial positions
+                shapes[index].StoreInitialPositions();
+
             }
         }
 
@@ -284,6 +315,9 @@ namespace Brickdoku
             //Console.WriteLine("Fully on grid? " + IsShapeFullyOnGrid(shape));
             if (IsShapeFullyOnGrid(shape) == true)
             {
+                // Play the sound effect
+                pop.Play();
+
                 for (int j = 0; j < 3; j++)
                 {
                     if (generatedNumbers[j] == Int32.Parse(shape.getBlockAtIndex(0).Text))
@@ -326,7 +360,7 @@ namespace Brickdoku
             else
             {
                 // If the shape is not fully on the grid, move it off the grid
-                MoveShapeOffGrid(shape);
+                shape.RestoreInitialPositions();
             }
         }
 
@@ -352,6 +386,7 @@ namespace Brickdoku
                 // add in time delay - got from this link - https://stackoverflow.com/questions/5424667/alternatives-to-thread-sleep?rq=3
                 new System.Threading.ManualResetEvent(false).WaitOne(2000);
                 lblStreak.Visible = false;
+                points.Play();
             }
 
             // display combination bonus
@@ -363,6 +398,7 @@ namespace Brickdoku
                 // add in time delay - got from this link - https://stackoverflow.com/questions/5424667/alternatives-to-thread-sleep?rq=3
                 new System.Threading.ManualResetEvent(false).WaitOne(2000);
                 lblCombination.Visible = false;
+                points.Play();
             }
         }
 
@@ -432,35 +468,7 @@ namespace Brickdoku
             return true;
         }
 
-        //helper function for SnapShapeToGrid function.
-        //moves the shape off if it doesn't fit on the grid
-        private void MoveShapeOffGrid(Shape shape)
-        {
-            // Calculate the average position of the shape buttons
-            int avgX = 0;
-            int avgY = 0;
-
-            for (int i = 0; i < shape.getSize(); i++)
-            {
-                Button button = shape.getBlockAtIndex(i);
-                avgX += button.Location.X + button.Width / 2;
-                avgY += button.Location.Y + button.Height / 2;
-            }
-
-            avgX /= shape.getSize();
-            avgY /= shape.getSize();
-
-            // Move the entire shape off the grid
-            int offsetX = avgX - 100;
-            int offsetY = avgY - 60;
-
-            for (int i = 0; i < shape.getSize(); i++)
-            {
-                Button button = shape.getBlockAtIndex(i);
-                button.Location = new Point(button.Location.X - offsetX, button.Location.Y - offsetY);
-            }
-        
-        }
+       
 
 
         private void Form1_Load(object sender, EventArgs e)
@@ -472,8 +480,14 @@ namespace Brickdoku
         {
             InitializeComponent(); // Initialise the new item
             initialiseShapes();
-            // used this to help with music https://stackoverflow.com/questions/14491431/playing-wav-file-with-c-sharp
-            music.PlayLooping(); // play music in a loop
+            /** used this to help with music https://stackoverflow.com/questions/14491431/playing-wav-file-with-c-sharp
+            music.PlayLooping();lay music in a loop */
+            
+
+            MXP.URL = @"Brickudoku_Music.mp3";
+            MXP.settings.playCount = 9999; //Repeating the music when it ends
+            MXP.Ctlcontrols.play();
+            MXP.Visible = false;
 
         }
 
@@ -593,7 +607,7 @@ namespace Brickdoku
 
                 // write randomly generated number to output
                 Console.WriteLine("Random number: " + number);
-                generateShape(number, 100, 100 + (i * 150));
+                generateShape(number, 100, 80 + (i * 220));
                 numberOfShapes++;
             }
             // check shape fits for all generated numbers
@@ -822,7 +836,7 @@ namespace Brickdoku
             if (BtnMute.Text == "p")
             {
                 Console.WriteLine("button pressed - muting");
-                music.Stop();
+                MXP.Ctlcontrols.stop();
                 BtnMute.Text = "m";
                 try
                 {
@@ -836,7 +850,7 @@ namespace Brickdoku
             else
             {
                 Console.WriteLine("button pressed - playing");
-                music.PlayLooping();
+                PlayMediaPlayer();
                 BtnMute.Text = "p";
                 try
                 {
@@ -847,6 +861,28 @@ namespace Brickdoku
                     Console.WriteLine("Error finding image!");
                 }
             }
+        }
+
+        private void PlayMediaPlayer()
+        {
+
+            if (bgPlaying == true)
+            {
+
+                background_music.Stop();
+                bgPlaying = false;
+            }
+
+            MXP.Ctlcontrols.play();
+
+        }
+        // USed this tutorial to use MediaPlayer https://www.youtube.com/watch?v=Ch7yY3ti_aI
+        private void PlayBackgroundSoundPlayer(object sender, EventArgs e)
+        {
+            background_music = new SoundPlayer(@"Brikudoku_Music.wav");
+            background_music.PlayLooping();
+            MXP.Ctlcontrols.stop(); // stop the media player
+            bgPlaying = true; // set playing to true
         }
 
         /**

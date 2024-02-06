@@ -32,6 +32,8 @@
             this.BtnStart = new System.Windows.Forms.Button();
             this.BtnExit = new System.Windows.Forms.Button();
             this.BtnMute = new System.Windows.Forms.Button();
+            this.MXP = new AxWMPLib.AxWindowsMediaPlayer();
+            ((System.ComponentModel.ISupportInitialize)(this.MXP)).BeginInit();
             this.SuspendLayout();
             // 
             // BtnStart
@@ -74,6 +76,15 @@
             this.BtnMute.UseVisualStyleBackColor = true;
             this.BtnMute.Click += new System.EventHandler(this.BtnMute_Click);
             // 
+            // MXP
+            // 
+            this.MXP.Enabled = true;
+            this.MXP.Location = new System.Drawing.Point(45, 31);
+            this.MXP.Name = "MXP";
+            this.MXP.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("MXP.OcxState")));
+            this.MXP.Size = new System.Drawing.Size(166, 63);
+            this.MXP.TabIndex = 4;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 25F);
@@ -81,6 +92,7 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(978, 624);
+            this.Controls.Add(this.MXP);
             this.Controls.Add(this.BtnMute);
             this.Controls.Add(this.BtnExit);
             this.Controls.Add(this.BtnStart);
@@ -95,6 +107,7 @@
             this.Name = "Form1";
             this.Text = "Brickudoku";
             this.Load += new System.EventHandler(this.Form1_Load_1);
+            ((System.ComponentModel.ISupportInitialize)(this.MXP)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -103,6 +116,7 @@
         private System.Windows.Forms.Button BtnStart;
         private System.Windows.Forms.Button BtnExit;
         private System.Windows.Forms.Button BtnMute;
+        private AxWMPLib.AxWindowsMediaPlayer MXP;
     }
 }
 
