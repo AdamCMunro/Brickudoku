@@ -31,7 +31,6 @@ C:\Users\adamm\OneDrive\computing\Uni\ComSystemsB\Brickudoku\Brickudoku\Brickdok
 C:\Users\adamm\OneDrive\computing\Uni\ComSystemsB\Brickudoku\Brickudoku\Brickdoku\bin\Debug\Brickdoku.exe
 C:\Users\adamm\OneDrive\computing\Uni\ComSystemsB\Brickudoku\Brickudoku\Brickdoku\bin\Debug\Brickdoku.pdb
 C:\Users\adamm\OneDrive\computing\Uni\ComSystemsB\Brickudoku\Brickudoku\Brickdoku\obj\Debug\Brickdoku.csproj.AssemblyReference.cache
-C:\Users\adamm\OneDrive\computing\Uni\ComSystemsB\Brickudoku\Brickudoku\Brickdoku\obj\Debug\Brickdoku.Form1.resources
 C:\Users\adamm\OneDrive\computing\Uni\ComSystemsB\Brickudoku\Brickudoku\Brickdoku\obj\Debug\Brickdoku.Properties.Resources.resources
 C:\Users\adamm\OneDrive\computing\Uni\ComSystemsB\Brickudoku\Brickudoku\Brickdoku\obj\Debug\Brickdoku.csproj.GenerateResource.cache
 C:\Users\adamm\OneDrive\computing\Uni\ComSystemsB\Brickudoku\Brickudoku\Brickdoku\obj\Debug\Brickdoku.csproj.CoreCompileInputs.cache
@@ -58,3 +57,9 @@ C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdok
 C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdoku\obj\Debug\Brickdoku.csproj.ResolveComReference.cache
 C:\Users\laura\OneDrive - University of Dundee\Computer Science\Bricks4\Brickdoku\obj\Debug\Brickdoku.Brickudoku.resources
 C:\Users\DELL\source\repos\Brickudoku\Brickdoku\obj\Debug\Brickdoku.Brickudoku.resources
+C:\Users\adamm\OneDrive\computing\Uni\ComSystemsB\Brickudoku\Brickudoku\Brickdoku\bin\Debug\Interop.WMPLib.dll
+C:\Users\adamm\OneDrive\computing\Uni\ComSystemsB\Brickudoku\Brickudoku\Brickdoku\bin\Debug\AxInterop.WMPLib.dll
+C:\Users\adamm\OneDrive\computing\Uni\ComSystemsB\Brickudoku\Brickudoku\Brickdoku\obj\Debug\Interop.WMPLib.dll
+C:\Users\adamm\OneDrive\computing\Uni\ComSystemsB\Brickudoku\Brickudoku\Brickdoku\obj\Debug\AxInterop.WMPLib.dll
+C:\Users\adamm\OneDrive\computing\Uni\ComSystemsB\Brickudoku\Brickudoku\Brickdoku\obj\Debug\Brickdoku.csproj.ResolveComReference.cache
+C:\Users\adamm\OneDrive\computing\Uni\ComSystemsB\Brickudoku\Brickudoku\Brickdoku\obj\Debug\Brickdoku.Brickudoku.resources
