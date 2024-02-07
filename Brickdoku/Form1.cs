@@ -31,7 +31,7 @@ namespace Brickdoku
         List<int> rows = new List<int>();
         List<int> columns = new List<int>();
         List<Tuple<int, int>> squares = new List<Tuple<int, int>>();
-      
+
         //music and sound effects
         SoundPlayer background_music;
         SoundPlayer pop = new SoundPlayer("pop_sound.wav"); //sound effect for placing shape on grid
@@ -62,7 +62,7 @@ namespace Brickdoku
         // score increase label
         Label lblScoreIncrease = new Label();
 
-
+        Form RulesForm = new Form(); // form for rules
         class Shape
         {
             int size; // the number of blocks used to make the shape
@@ -171,7 +171,7 @@ namespace Brickdoku
             shapes[30] = new Shape(5, new int[] { 0, -(generatedSize), -2 * (generatedSize), generatedSize, 2 * (generatedSize) }, new int[] { 0, 0, 0, 0, 0 }); // 1x5 horizontal
             shapes[31] = new Shape(5, new int[] { 0, 0, 0, 0, 0 }, new int[] { 0, -(generatedSize), -2 * (generatedSize), generatedSize, 2 * (generatedSize) }); // 1x5 vertical
             shapes[32] = new Shape(5, new int[] { 0, 0, 0, -(generatedSize), generatedSize }, new int[] { 0, generatedSize, -(generatedSize), -(generatedSize), -(generatedSize) }); // 5 piece 'T' shape
-            shapes[33] = new Shape(5, new int[] { 0, generatedSize, generatedSize, - (generatedSize), generatedSize }, new int[] { 0, generatedSize, -(generatedSize), 0, 0 }); // 5 piece 'T' shape rotated 90 degrees clockwise
+            shapes[33] = new Shape(5, new int[] { 0, generatedSize, generatedSize, -(generatedSize), generatedSize }, new int[] { 0, generatedSize, -(generatedSize), 0, 0 }); // 5 piece 'T' shape rotated 90 degrees clockwise
             shapes[34] = new Shape(5, new int[] { 0, 0, 0, -(generatedSize), generatedSize }, new int[] { 0, generatedSize, -(generatedSize), generatedSize, generatedSize }); // 5 piece 'T' shape rotated 180 degrees clockwise
             shapes[35] = new Shape(5, new int[] { 0, -(generatedSize), -(generatedSize), generatedSize, -(generatedSize) }, new int[] { 0, generatedSize, -(generatedSize), 0, 0 }); // 5 piece 'T' shape rotated 270 degrees clockwise
             shapes[36] = new Shape(5, new int[] { 0, 0, 0, generatedSize, 2 * (generatedSize) }, new int[] { 0, -(generatedSize), -2 * (generatedSize), 0, 0 }); // 5 piece 'L' shape
@@ -364,7 +364,7 @@ namespace Brickdoku
                 for (int i = 0; i < 3; i++)
                 {
                     // remove the shape we have  from the generated numbers array by resestting to zero
-                   if (placed[i] == false)
+                    if (placed[i] == false)
                     {
                         Console.WriteLine("Checking");
                         placeable[i] = checkShapeFits(generatedNumbers[i]);
@@ -379,7 +379,7 @@ namespace Brickdoku
             }
         }
 
-        
+
         /**
          * Calculate and display streak and combination information
          */
@@ -491,7 +491,7 @@ namespace Brickdoku
             return true;
         }
 
-       
+
 
 
         private void Form1_Load(object sender, EventArgs e)
@@ -505,7 +505,7 @@ namespace Brickdoku
             initialiseShapes();
             /** used this to help with music https://stackoverflow.com/questions/14491431/playing-wav-file-with-c-sharp
             music.PlayLooping();lay music in a loop */
-            
+
 
             MXP.URL = @"Brickudoku_Music.mp3";
             MXP.settings.playCount = 9999; //Repeating the music when it ends
@@ -523,11 +523,11 @@ namespace Brickdoku
             {
                 for (int x = 0; x < 9; x++)
                 {
-                
+
                     btn[x, y] = new Button();
                     btn[x, y].SetBounds(275 + (49 * x), 60 + (49 * y), 50, 50);
                     // change background colour to white to differentiate squares
-                    if ((x>2 && x<6 && y<3) || (x<3 && y>2 && y<6) ||(x>5 && y>2 && y<6) || (x>2 && x<6 && y>5))
+                    if ((x > 2 && x < 6 && y < 3) || (x < 3 && y > 2 && y < 6) || (x > 5 && y > 2 && y < 6) || (x > 2 && x < 6 && y > 5))
                     {
                         btn[x, y].BackColor = Color.White;
                     }
@@ -558,6 +558,7 @@ namespace Brickdoku
             BtnStart.Hide();
             this.BackgroundImage = null; // remove image from gameplay screen
             this.BackColor = Color.Linen;
+            menuStrip1.BackColor = Color.Linen;
             createGrid();
             setUpLabels();
             InitialiseGridOccupancy();
@@ -574,6 +575,7 @@ namespace Brickdoku
             Controls.Add(lblTitle);
             lblTitle.Font = new System.Drawing.Font("OCR A Extended", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             lblTitle.Text = "Brickudoku";
+            lblTitle.BringToFront();
             lblTitle.ForeColor = System.Drawing.Color.Crimson;
             lblTitle.SetBounds(400, 10, 250, 40);
 
@@ -907,7 +909,7 @@ namespace Brickdoku
         private void BtnMute_Click(object sender, EventArgs e)
         {
             // when clicked if playing, volume turns off, and image changes to muted image
-            
+
             if (BtnMute.Text == "p")
             {
                 Console.WriteLine("button pressed - muting");
@@ -968,7 +970,7 @@ namespace Brickdoku
             int xMod;
             int yMod;
             int count = 0;
-            
+
 
             for (int x = 0; x < 9; x++)
             {
@@ -1071,7 +1073,7 @@ namespace Brickdoku
             btnExit.Click += new EventHandler(this.BtnExit_Click);
         }
 
-        private void BtnPlayAgain_Click(object sender, EventArgs e, Label lblGameOver,Button btnPlayAgain, Button btnExit)
+        private void BtnPlayAgain_Click(object sender, EventArgs e, Label lblGameOver, Button btnPlayAgain, Button btnExit)
         {
             // when start button is clicked, hide all the items in the current menu screen
             // and display the grid game form
@@ -1170,7 +1172,90 @@ namespace Brickdoku
 
         private void rulesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            RulesForm.Icon = Properties.Resources.BrickudokuIcon;
+            RulesForm.Text = "Brickudoku Rules";
+            RulesForm.BackColor = Color.Linen;
+            RulesForm.MaximizeBox = false;
+            RulesForm.MinimizeBox = false;
+            RulesForm.MaximumSize = new System.Drawing.Size(800, 500);
+            RulesForm.MinimumSize = new System.Drawing.Size(800, 500);
+            // center to center of the parent form
+            RulesForm.StartPosition = FormStartPosition.CenterParent;
+            RulesForm.AutoScroll = true;
+
+            Label LblRulesTitle = new Label();
+            LblRulesTitle.Font = new System.Drawing.Font("OCR A Extended", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblRulesTitle.Text = "Brickudoku Rules";
+            LblRulesTitle.ForeColor = System.Drawing.Color.Crimson;
+            LblRulesTitle.SetBounds(50, 20, 700, 50);
+            RulesForm.Controls.Add(LblRulesTitle);
+
+            // make a back button
+
+            // rules
+            Label LblPlayTitle = new Label();
+            LblPlayTitle.Text = "Playing the Game: ";
+            LblPlayTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblPlayTitle.ForeColor = System.Drawing.Color.Crimson;
+            LblPlayTitle.SetBounds(50, 100, 400, 30);
+            RulesForm.Controls.Add(LblPlayTitle);
+
+            Label LblPlay = new Label();
+            LblPlay.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblPlay.ForeColor = System.Drawing.Color.Black;
+            LblPlay.SetBounds(50, 140, 700, 100);
+            LblPlay.Text = "Once you have started a new game, 3 different blocks will be automatically generated at the Left Hand Side. Click on a block and drag it to the point on the grid where you would like to place it. Continue to place the rest of your blocks. Once you have used all of your shapes, 3 new shapes for you to place will be generated. The aim of the game is to get as high a score as possible.";
+            RulesForm.Controls.Add(LblPlay);
+
+            // rules
+            Label LblPointsTitle = new Label();
+            LblPointsTitle.Text = "Scoring Points: ";
+            LblPointsTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblPointsTitle.ForeColor = System.Drawing.Color.Crimson;
+            LblPointsTitle.SetBounds(50, 250, 400, 30);
+            RulesForm.Controls.Add(LblPointsTitle);
+
+            Label LblPoints = new Label();
+            LblPoints.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblPoints.ForeColor = System.Drawing.Color.Black;
+            LblPoints.SetBounds(50, 290, 700, 100);
+            LblPoints.Text = "To score points, place blocks to complete rows, columns and squares. A complete sqaure must be a 3x3 sqaure on one of the squares outlined in the grid background. You can score extra points by getting a combo or a streak. A combo is when you clear multiple rows, columns or squares in one turn. A streak is when you complete a row, column or square multiple turns in a row. See the pictures below for examples of a row, column, square and combo: ";
+            RulesForm.Controls.Add(LblPoints);
+
+            createGamePlayImages();
+
+            RulesForm.ShowDialog();
         }
+
+        /**
+         * Function to set and place the gamepleay images
+         */
+        void createGamePlayImages()
+        {
+            PictureBox rowImage = new PictureBox();
+            rowImage.Image = Properties.Resources.row;
+            rowImage.SetBounds(50, 400, 150, 150);
+            rowImage.SizeMode = PictureBoxSizeMode.StretchImage;
+            RulesForm.Controls.Add(rowImage);
+
+            PictureBox colImage = new PictureBox();
+            colImage.Image = Properties.Resources.column;
+            colImage.SetBounds(230, 400, 150, 150);
+            colImage.SizeMode = PictureBoxSizeMode.StretchImage;
+            RulesForm.Controls.Add(colImage);
+
+            PictureBox squareImage = new PictureBox();
+            squareImage.Image = Properties.Resources.square;
+            squareImage.SetBounds(410, 400, 150, 150);
+            squareImage.SizeMode = PictureBoxSizeMode.StretchImage;
+            RulesForm.Controls.Add(squareImage);
+
+            PictureBox comboImage = new PictureBox();
+            comboImage.Image = Properties.Resources.combo;
+            comboImage.SetBounds(590, 400, 150, 150);
+            comboImage.SizeMode = PictureBoxSizeMode.StretchImage;
+            RulesForm.Controls.Add(comboImage);
+        }
+
     }
 }

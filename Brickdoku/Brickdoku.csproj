@@ -114,5 +114,23 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\brickudoku_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BrickudokuIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Brickudoku - Combo Example.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Brickudoku - Horizontal Line Example.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Brickudoku - Square Example.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Brickudoku - Vertical Line Example.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
