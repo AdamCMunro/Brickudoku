@@ -1042,7 +1042,7 @@ namespace Brickdoku
             }
         }
 
-        void displayGameOverScreen()
+        async void displayGameOverScreen()
         {
             hideGrid();
             hideShapes();
@@ -1051,35 +1051,197 @@ namespace Brickdoku
             Label lblGameOver = new Label();
             Button btnPlayAgain = new Button();
             Button btnExit = new Button();
+            Label lblGameOverScoreHeader = new Label();
+            Label[] lblHighScores = new Label[5];
+            Label lblPlayerFinalScore = new Label();
+            Label lblEnterName = new Label();
+            TextBox txtBoxUserName = new TextBox();
+            string highScoresText = System.IO.File.ReadAllText("..\\..\\HighScores.txt");
+            string[] highScoreUsers = new string[5];
+            int[] highScoreScores = new int[5];
+            int newHighScoreIndex = -1;
+            int j = 0;
+            int k = 0;
+
+            string[] fileTextArr = highScoresText.Split(':');
+
+            for (int i = 0; i < fileTextArr.Length; i++)
+            {
+                Console.WriteLine(fileTextArr[i]);
+                if (fileTextArr[i] != "---" && fileTextArr[i] != "0")
+                {
+                    if (i % 2 == 0)
+                    {
+                        Console.WriteLine("2x : " + i);
+                        highScoreUsers[j] = fileTextArr[i];
+                        j++;
+                    }
+                    else
+                    {
+                        Console.WriteLine("1x : " + i);
+                        highScoreScores[k] = int.Parse(fileTextArr[i]);
+                        k++;
+                    }
+                }
+                else if (i % 2 == 0)
+                {
+                    Console.WriteLine("2x : " + i);
+                    highScoreUsers[j] = "---";
+                    j++;
+                }
+                else
+                {
+                    Console.WriteLine("1x : " + i);
+                    highScoreScores[k] = 0;
+                    k++;
+                }
+            }
 
             Controls.Add(lblGameOver);
             lblGameOver.Font = new System.Drawing.Font("OCR A Extended", 45F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             lblGameOver.Text = "GAME OVER";
             lblGameOver.ForeColor = System.Drawing.Color.Crimson;
-            lblGameOver.SetBounds(320, 100, 500, 100);
-
-            Controls.Add(btnPlayAgain);
-            btnPlayAgain.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            btnPlayAgain.Text = "Play Again";
-            btnPlayAgain.BackColor = Color.LightPink;
-            btnPlayAgain.SetBounds(250, 300, 200, 150);
-            btnPlayAgain.Click += (sender, e) => BtnPlayAgain_Click(sender, e, lblGameOver, btnPlayAgain, btnExit);
+            lblGameOver.SetBounds(320, 50, 500, 100);
 
             Controls.Add(btnExit);
             btnExit.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             btnExit.Text = "Exit";
             btnExit.BackColor = Color.LightPink;
-            btnExit.SetBounds(550, 300, 200, 150);
+            btnExit.SetBounds(495, 500, 100, 75);
             btnExit.Click += new EventHandler(this.BtnExit_Click);
+
+            Controls.Add(lblGameOverScoreHeader);
+            lblGameOverScoreHeader.Font = new System.Drawing.Font("OCR A Extended", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblGameOverScoreHeader.Text = "Scores:";
+            lblGameOverScoreHeader.ForeColor = System.Drawing.Color.Crimson;
+            lblGameOverScoreHeader.SetBounds(160, 140, 200, 50);
+
+            for (int i = 0; i < lblHighScores.Length; i++)
+            {
+                lblHighScores[i] = new Label();
+                Controls.Add(lblHighScores[i]);
+                lblHighScores[i].Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                if (highScoreScores[i] == 0)
+                {
+                    lblHighScores[i].Text = highScoreUsers[i] + " : 00000";
+                }
+                else if (highScoreScores[i] < 10000 && highScoreScores[i] >= 1000)
+                {
+                    lblHighScores[i].Text = highScoreUsers[i] + " : 0" + highScoreScores[i];
+                }
+                else if (highScoreScores[i] < 1000 && highScoreScores[i] >= 100)
+                {
+                    lblHighScores[i].Text = highScoreUsers[i] + " : 00" + highScoreScores[i];
+                }
+                else if (highScoreScores[i] < 100 && highScoreScores[i] >= 10)
+                {
+                    lblHighScores[i].Text = highScoreUsers[i] + " : 000" + highScoreScores[i];
+                }
+                else
+                {
+                    lblHighScores[i].Text = highScoreUsers[i] + " : 0000" + highScoreScores[i];
+                }
+                lblHighScores[i].ForeColor = System.Drawing.Color.Crimson;
+                lblHighScores[i].SetBounds(160, 190 + ((i * 50)), 200, 50);
+
+                Controls.Add(btnPlayAgain);
+                btnPlayAgain.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                btnPlayAgain.Text = "Play Again";
+                btnPlayAgain.BackColor = Color.LightPink;
+                btnPlayAgain.SetBounds(385, 500, 100, 75);
+                btnPlayAgain.Click += (sender, e) => BtnPlayAgain_Click(sender, e, lblGameOver, btnPlayAgain, btnExit, lblPlayerFinalScore, lblHighScores, lblGameOverScoreHeader);
+            }
+
+            Controls.Add(lblPlayerFinalScore);
+            lblPlayerFinalScore.Font = new System.Drawing.Font("OCR A Extended", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblPlayerFinalScore.Text = "Score: " + totalScore;
+            lblPlayerFinalScore.ForeColor = System.Drawing.Color.Crimson;
+            lblPlayerFinalScore.SetBounds(600, 250, 400, 100);
+
+            if (totalScore > highScoreScores[highScoreScores.Length - 1])
+            {
+                newHighScoreIndex = highScoreScores.Length - 1;
+                for (int i = 0; i < highScoreScores.Length - 1; i++)
+                {
+                    if (totalScore > highScoreScores[i])
+                    {
+                        newHighScoreIndex = i;
+                        break;
+                    }
+                }
+                for (int i = 0; i < 5; i++)
+                {
+                    lblHighScores[newHighScoreIndex].Hide();
+                    await Task.Delay(300);
+                    lblHighScores[newHighScoreIndex].Show();
+                    await Task.Delay(300);
+                }
+                for (int i = highScoreScores.Length - 1; i >= newHighScoreIndex; i--)
+                {
+                    if (i == newHighScoreIndex)
+                    {
+                        highScoreScores[i] = totalScore;
+                    }
+                    else
+                    {
+                        highScoreScores[i] = highScoreScores[i - 1];
+                        highScoreUsers[i] = highScoreUsers[i - 1];
+                    }
+                }
+
+                Controls.Add(lblEnterName);
+                lblEnterName.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                lblEnterName.ForeColor = System.Drawing.Color.Crimson;
+                lblEnterName.Text = "ENTER NAME";
+                lblEnterName.SetBounds(410, 225, 200, 50);
+
+                Controls.Add(txtBoxUserName);
+                txtBoxUserName.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                txtBoxUserName.ForeColor = System.Drawing.Color.Crimson;
+                txtBoxUserName.MaxLength = 3;
+                txtBoxUserName.TextAlign = HorizontalAlignment.Center;
+                txtBoxUserName.SetBounds(460, 275, 75, 100);
+                txtBoxUserName.KeyDown += (sender, e) => txtBoxUserName_Enter(sender, e, lblEnterName, lblHighScores, totalScore, highScoreScores, newHighScoreIndex, btnPlayAgain);
+
+            }
         }
 
-        private void BtnPlayAgain_Click(object sender, EventArgs e, Label lblGameOver, Button btnPlayAgain, Button btnExit)
+        static void txtBoxUserName_Enter(object sender, KeyEventArgs e, Label lbl, Label[] lblName, int score, int[] highScoreScores, int index, Button playAgain)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                ((Control)sender).Hide();
+                lbl.Hide();
+                lblName[index].Text = ((Control)sender).Text + " : " + score;
+
+                int currentScore;
+
+                string fileOutputText = "";
+                for (int i = 0; i < highScoreScores.Length; i++)
+                {
+                    string currentName = lblName[i].Text.Substring(0, 3);
+                    Console.WriteLine("name: " + currentName);
+                    currentScore = highScoreScores[i];
+                    fileOutputText = fileOutputText + currentName + ":" + currentScore + ":";
+                }
+                fileOutputText = fileOutputText.Remove(fileOutputText.Length - 1, 1); // code from https://www.c-sharpcorner.com/blogs/remove-last-character-from-string-in-c-sharp1
+                System.IO.File.WriteAllText("..\\..\\HighScores.txt", fileOutputText);
+
+            }
+        }
+        private void BtnPlayAgain_Click(object sender, EventArgs e, Label lblGameOver, Button btnPlayAgain, Button btnExit, Label finalScore, Label[] highScores, Label gameOverHead)
         {
             // when start button is clicked, hide all the items in the current menu screen
             // and display the grid game form
             btnExit.Hide();
             btnPlayAgain.Hide();
             lblGameOver.Hide();
+            finalScore.Hide();
+            gameOverHead.Hide();
+            foreach (Label l in highScores)
+            {
+                l.Hide();
+            }
             InitialiseGridOccupancy(); // reset occupancy
             this.BackColor = Color.Linen;
             // make playable again
