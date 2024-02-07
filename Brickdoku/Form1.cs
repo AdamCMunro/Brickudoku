@@ -505,7 +505,7 @@ namespace Brickdoku
             initialiseShapes();
             /** used this to help with music https://stackoverflow.com/questions/14491431/playing-wav-file-with-c-sharp
             music.PlayLooping();lay music in a loop */
-
+            rulesSetUp(); // set up rules
 
             MXP.URL = @"Brickudoku_Music.mp3";
             MXP.settings.playCount = 9999; //Repeating the music when it ends
@@ -1332,7 +1332,7 @@ namespace Brickdoku
             result = MessageBox.Show("Brickudoku by Adam Munro, Marylou Das Chaagas e Silva and Laura Clark, 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void rulesToolStripMenuItem_Click(object sender, EventArgs e)
+        void rulesSetUp()
         {
             RulesForm.Icon = Properties.Resources.BrickudokuIcon;
             RulesForm.Text = "Brickudoku Rules";
@@ -1381,11 +1381,70 @@ namespace Brickdoku
             LblPoints.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             LblPoints.ForeColor = System.Drawing.Color.Black;
             LblPoints.SetBounds(50, 290, 700, 100);
-            LblPoints.Text = "To score points, place blocks to complete rows, columns and squares. A complete sqaure must be a 3x3 sqaure on one of the squares outlined in the grid background. You can score extra points by getting a combo or a streak. A combo is when you clear multiple rows, columns or squares in one turn. A streak is when you complete a row, column or square multiple turns in a row. See the pictures below for examples of a row, column, square and combo: ";
+            LblPoints.Text = "To score points, place blocks on the grid. For more points, aim to complete rows, columns and squares. A complete sqaure must be a 3x3 sqaure on one of the squares outlined in the grid background. You can score extra points by getting a combo or a streak. A combo is when you clear multiple rows, columns or squares in one turn. A streak is when you complete a row, column or square multiple turns in a row. See the pictures below for examples of a row, column, square and combo: ";
             RulesForm.Controls.Add(LblPoints);
 
-            createGamePlayImages();
+            createGamePlayImages(); // images to demonstrate gameplay
 
+            Label LblEndTitle = new Label();
+            LblEndTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblEndTitle.ForeColor = System.Drawing.Color.Crimson;
+            LblEndTitle.SetBounds(50, 580, 400, 30);
+            LblEndTitle.Text = "Ending the Game: ";
+            RulesForm.Controls.Add(LblEndTitle);
+
+            Label LblEnd = new Label();
+            LblEnd.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblEnd.ForeColor = System.Drawing.Color.Black;
+            LblEnd.SetBounds(50, 620, 700, 150);
+            LblEnd.Text = "The game will automatically end when you have no pieces left to play that will fit. Pieces that generate and will not fit are coloured grey and you are unable to move them. The game checks after each piece played and updates which pieces are playable. If you have no playable pieces, the game ends. Once the game ends you will see a game over screen with your score, previous high scores, and an option to exit or play the game again. If you have made it onto the top 5 high scores, the list will be updated and your score will be added to the high scores list. You can also choose to exit the game at any point by choosing the menu option or clicking the cross.";
+            RulesForm.Controls.Add(LblEnd);
+
+            Label LblSoundTitle = new Label();
+            LblSoundTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblSoundTitle.ForeColor = System.Drawing.Color.Crimson;
+            LblSoundTitle.SetBounds(50, 800, 400, 30);
+            LblSoundTitle.Text = "Music and Sound Effects: ";
+            RulesForm.Controls.Add(LblSoundTitle);
+
+            Label LblSound = new Label();
+            LblSound.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblSound.ForeColor = System.Drawing.Color.Black;
+            LblSound.SetBounds(50, 840, 700, 60);
+            LblSound.Text = "The background music that is playing can be muted and un-muted at any point in the game by clicking the mute button in the top right hand corner of the screen. Muting the background music will also mute the sound effects that happen during gameplay.";
+            RulesForm.Controls.Add(LblSound);
+
+            // create back button
+            Button BtnRulesClose = new Button();
+            BtnRulesClose.Text = "Close Rules";
+            BtnRulesClose.SetBounds(50, 920, 125, 50);
+            BtnRulesClose.Font = new System.Drawing.Font("OCR A Extended", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            BtnRulesClose.BackColor = Color.LightPink;
+            BtnRulesClose.Click += new EventHandler(this.BtnRulesClose_Click);
+            RulesForm.Controls.Add(BtnRulesClose);
+
+            // add blank space underneath
+            Label LblSpacing = new Label();
+            LblSpacing.SetBounds(0, 970, 800, 30);
+            RulesForm.Controls.Add(LblSpacing);
+
+
+        }
+
+        /**
+         * Event handler for button to close the rules page
+         */
+        private void BtnRulesClose_Click(object sender, EventArgs e)
+        {
+            RulesForm.Close();
+        }
+
+        /**
+         * Event handler to show the rules form when rules menu option is clicked
+         */
+        private void rulesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // show the rules form
             RulesForm.ShowDialog();
         }
 
