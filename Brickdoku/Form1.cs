@@ -1114,31 +1114,34 @@ namespace Brickdoku
         }
     }
 
-    /**
-    * Take in the shape placed and calculate the score
-    * Also need the streak and combinations info
-    */
-    async void CalculateScore(Shape shape, int numComplete, int streak)
-    {
-        int score = 0;
-        score += shape.getSize();
-        score += 18 * numComplete; // add completed/combo bonus
-        if (streak > 1)
+        /**
+        * Take in the shape placed and calculate the score
+        * Also need the streak and combinations info
+        */
+        async void CalculateScore(Shape shape, int numComplete, int streak)
         {
-            score += 27; // add 27 for a streak bonus
+            int score = 0;
+            score += shape.getSize();
+            score += 18 * numComplete; // add completed/combo bonus
+            if (streak > 1)
+            {
+                score += 27; // add 27 for a streak bonus
+            }
+
+            totalScore += score;
+            lblScore.Text = totalScore.ToString();
+
+
+            // if score is greater than zero, display label showing what it is increased by
+            if (score > 0)
+            {
+                lblScoreIncrease.Text = "+ " + score.ToString();
+                lblScoreIncrease.Visible = true;
+                // add in time delay - got from this link - https://stackoverflow.com/questions/24136390/thread-sleep-without-freezing-the-ui#:~:text=The%20simplest%20way%20to%20use,asynchronous%20add%20the%20async%20modifier.&text=Now%20you%20can%20use%20the,asynchronous%20tasks%2C%20in%20your%20case.
+                await Task.Delay(1000);
+                lblScoreIncrease.Visible = false;
+            }
         }
-        // if score is greater than zero, display label showing what it is increased by
-        if (score > 0)
-        {
-            lblScoreIncrease.Text = "+ " + score.ToString();
-            lblScoreIncrease.Visible = true;
-            // add in time delay - got from this link - https://stackoverflow.com/questions/24136390/thread-sleep-without-freezing-the-ui#:~:text=The%20simplest%20way%20to%20use,asynchronous%20add%20the%20async%20modifier.&text=Now%20you%20can%20use%20the,asynchronous%20tasks%2C%20in%20your%20case.
-            await Task.Delay(1000);
-            lblScoreIncrease.Visible = false;
-        }
-        totalScore += score;
-        lblScore.Text = totalScore.ToString();
-    }
 
     private void BtnExit_Click(object sender, EventArgs e)
     {
@@ -1282,108 +1285,88 @@ namespace Brickdoku
         }
     }
 
-    async void DisplayGameOverScreen()
-    {
-        HideGrid();
-        HideShapes();
-        lblScore.Hide();
-        lblDisplayScore.Hide();
-        Label lblGameOver = new Label();
-        Button btnPlayAgain = new Button();
-        Button btnExit = new Button();
-        Label lblGameOverScoreHeader = new Label();
-        Label[] lblHighScores = new Label[5];
-        Label lblPlayerFinalScore = new Label();
-        Label lblEnterName = new Label();
-        TextBox txtBoxUserName = new TextBox();
-        string highScoresText = System.IO.File.ReadAllText("..\\..\\HighScores.txt");
-        string[] highScoreUsers = new string[5];
-        int[] highScoreScores = new int[5];
-        int newHighScoreIndex = -1;
-        int j = 0;
-        int k = 0;
-
-        string[] fileTextArr = highScoresText.Split(':');
-
-        for (int i = 0; i < fileTextArr.Length; i++)
+        async void DisplayGameOverScreen()
         {
-            Console.WriteLine(fileTextArr[i]);
-            if (fileTextArr[i] != "---" && fileTextArr[i] != "0")
+            HideGrid();
+            HideShapes();
+            lblScore.Hide();
+            lblDisplayScore.Hide();
+            Label lblGameOver = new Label();
+            Button btnPlayAgain = new Button();
+            Button btnExit = new Button();
+            Label lblGameOverScoreHeader = new Label();
+            Label[] lblHighScores = new Label[5];
+            Label lblPlayerFinalScore = new Label();
+            Label lblEnterName = new Label();
+            TextBox txtBoxUserName = new TextBox();
+            string highScoresText = System.IO.File.ReadAllText("..\\..\\HighScores.txt");
+            string[] highScoreUsers = new string[5];
+            int[] highScoreScores = new int[5];
+            int newHighScoreIndex = -1;
+            int j = 0;
+            int k = 0;
+
+            string[] fileTextArr = highScoresText.Split(':');
+
+            for (int i = 0; i < fileTextArr.Length; i++)
             {
-                if (i % 2 == 0)
+                Console.WriteLine(fileTextArr[i]);
+                if (fileTextArr[i] != "---" && fileTextArr[i] != "0")
+                {
+                    if (i % 2 == 0)
+                    {
+                        Console.WriteLine("2x : " + i);
+                        highScoreUsers[j] = fileTextArr[i];
+                        j++;
+                    }
+                    else
+                    {
+                        Console.WriteLine("1x : " + i);
+                        highScoreScores[k] = int.Parse(fileTextArr[i]);
+                        k++;
+                    }
+                }
+                else if (i % 2 == 0)
                 {
                     Console.WriteLine("2x : " + i);
-                    highScoreUsers[j] = fileTextArr[i];
+                    highScoreUsers[j] = "---";
                     j++;
                 }
                 else
                 {
                     Console.WriteLine("1x : " + i);
-                    highScoreScores[k] = int.Parse(fileTextArr[i]);
+                    highScoreScores[k] = 0;
                     k++;
                 }
             }
-            else if (i % 2 == 0)
-            {
-                Console.WriteLine("2x : " + i);
-                highScoreUsers[j] = "---";
-                j++;
-            }
-            else
-            {
-                Console.WriteLine("1x : " + i);
-                highScoreScores[k] = 0;
-                k++;
-            }
-        }
 
-        Controls.Add(lblGameOver);
-        lblGameOver.Font = new System.Drawing.Font("OCR A Extended", 45F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        lblGameOver.Text = "GAME OVER";
-        lblGameOver.ForeColor = System.Drawing.Color.Crimson;
-        lblGameOver.SetBounds(320, 50, 500, 100);
+            Controls.Add(lblGameOver);
+            lblGameOver.Font = new System.Drawing.Font("OCR A Extended", 45F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblGameOver.Text = "GAME OVER";
+            lblGameOver.ForeColor = System.Drawing.Color.Crimson;
+            lblGameOver.SetBounds(320, 50, 500, 100);
 
-        Controls.Add(btnExit);
-        btnExit.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        btnExit.Text = "Exit";
-        btnExit.BackColor = Color.LightPink;
-        btnExit.SetBounds(495, 500, 100, 75);
-        btnExit.Click += new EventHandler(this.BtnExit_Click);
+            Controls.Add(btnExit);
+            btnExit.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            btnExit.Text = "Exit";
+            btnExit.BackColor = Color.LightPink;
+            btnExit.SetBounds(495, 500, 100, 75);
+            btnExit.Click += new EventHandler(this.BtnExit_Click);
 
-        Controls.Add(lblGameOverScoreHeader);
-        lblGameOverScoreHeader.Font = new System.Drawing.Font("OCR A Extended", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        lblGameOverScoreHeader.Text = "Scores:";
-        lblGameOverScoreHeader.ForeColor = System.Drawing.Color.Crimson;
-        lblGameOverScoreHeader.SetBounds(160, 140, 200, 50);
+            Controls.Add(lblGameOverScoreHeader);
+            lblGameOverScoreHeader.Font = new System.Drawing.Font("OCR A Extended", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblGameOverScoreHeader.Text = "Scores:";
+            lblGameOverScoreHeader.ForeColor = System.Drawing.Color.Crimson;
+            lblGameOverScoreHeader.SetBounds(160, 140, 200, 50);
 
             for (int i = 0; i < lblHighScores.Length; i++)
             {
                 lblHighScores[i] = new Label();
                 Controls.Add(lblHighScores[i]);
                 lblHighScores[i].Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                if (highScoreScores[i] == 0)
-                {
-                    lblHighScores[i].Text = highScoreUsers[i] + " : 00000";
-                }
-                else if (highScoreScores[i] < 10000 && highScoreScores[i] >= 1000)
-                {
-                    lblHighScores[i].Text = highScoreUsers[i] + " : 0" + highScoreScores[i];
-                }
-                else if (highScoreScores[i] < 1000 && highScoreScores[i] >= 100)
-                {
-                    lblHighScores[i].Text = highScoreUsers[i] + " : 00" + highScoreScores[i];
-                }
-                else if (highScoreScores[i] < 100 && highScoreScores[i] >= 10)
-                {
-                    lblHighScores[i].Text = highScoreUsers[i] + " : 000" + highScoreScores[i];
-                }
-                else
-                {
-                    lblHighScores[i].Text = highScoreUsers[i] + " : 0000" + highScoreScores[i];
-                }
+                DisplayHighScoreData(lblHighScores[i], highScoreUsers[i], highScoreScores[i]);
                 lblHighScores[i].ForeColor = System.Drawing.Color.Crimson;
                 lblHighScores[i].SetBounds(160, 190 + ((i * 50)), 200, 50);
-
 
             }
 
@@ -1395,66 +1378,92 @@ namespace Brickdoku
             btnPlayAgain.Click += (sender, e) => BtnPlayAgain_Click(sender, e, lblGameOver, btnPlayAgain, btnExit, lblPlayerFinalScore, lblHighScores, lblGameOverScoreHeader);
 
             Controls.Add(lblPlayerFinalScore);
-        lblPlayerFinalScore.Font = new System.Drawing.Font("OCR A Extended", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        lblPlayerFinalScore.Text = "Score: " + totalScore;
-        lblPlayerFinalScore.ForeColor = System.Drawing.Color.Crimson;
-        lblPlayerFinalScore.SetBounds(600, 250, 400, 100);
+            lblPlayerFinalScore.Font = new System.Drawing.Font("OCR A Extended", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblPlayerFinalScore.Text = "Score: " + totalScore;
+            lblPlayerFinalScore.ForeColor = System.Drawing.Color.Crimson;
+            lblPlayerFinalScore.SetBounds(600, 250, 400, 100);
 
-        if (totalScore > highScoreScores[highScoreScores.Length - 1])
-        {
-            newHighScoreIndex = highScoreScores.Length - 1;
-            for (int i = 0; i < highScoreScores.Length - 1; i++)
+            if (totalScore > highScoreScores[highScoreScores.Length - 1])
             {
-                if (totalScore > highScoreScores[i])
+                newHighScoreIndex = highScoreScores.Length - 1;
+                for (int i = 0; i < highScoreScores.Length - 1; i++)
                 {
-                    newHighScoreIndex = i;
-                    break;
+                    if (totalScore > highScoreScores[i])
+                    {
+                        newHighScoreIndex = i;
+                        break;
+                    }
                 }
-            }
-            for (int i = 0; i < 5; i++)
-            {
-                lblHighScores[newHighScoreIndex].Hide();
-                await Task.Delay(300);
-                lblHighScores[newHighScoreIndex].Show();
-                await Task.Delay(300);
-            }
-            for (int i = highScoreScores.Length - 1; i >= newHighScoreIndex; i--)
-            {
-                if (i == newHighScoreIndex)
+                for (int i = 0; i < 5; i++)
                 {
-                    highScoreScores[i] = totalScore;
+                    lblHighScores[newHighScoreIndex].Hide();
+                    await Task.Delay(300);
+                    lblHighScores[newHighScoreIndex].Show();
+                    await Task.Delay(300);
                 }
-                else
+                for (int i = highScoreScores.Length - 1; i >= newHighScoreIndex; i--)
                 {
-                    highScoreScores[i] = highScoreScores[i - 1];
-                    highScoreUsers[i] = highScoreUsers[i - 1];
+                    if (i == newHighScoreIndex)
+                    {
+                        highScoreScores[i] = totalScore;
+                        DisplayHighScoreData(lblHighScores[i], "---", totalScore);
+                    }
+                    else
+                    {
+                        highScoreScores[i] = highScoreScores[i - 1];
+                        highScoreUsers[i] = highScoreUsers[i - 1];
+                        DisplayHighScoreData(lblHighScores[i], highScoreUsers[i], highScoreScores[i]);
+                    }
                 }
+
+                Controls.Add(lblEnterName);
+                lblEnterName.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                lblEnterName.ForeColor = System.Drawing.Color.Crimson;
+                lblEnterName.Text = "ENTER NAME";
+                lblEnterName.SetBounds(410, 225, 200, 50);
+
+                Controls.Add(txtBoxUserName);
+                txtBoxUserName.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                txtBoxUserName.ForeColor = System.Drawing.Color.Crimson;
+                txtBoxUserName.MaxLength = 3;
+                txtBoxUserName.TextAlign = HorizontalAlignment.Center;
+                txtBoxUserName.SetBounds(460, 275, 75, 100);
+                txtBoxUserName.KeyDown += (sender, e) => TxtBoxUserName_Enter(sender, e, lblEnterName, lblHighScores, totalScore, highScoreScores, newHighScoreIndex, btnPlayAgain);
+
             }
-
-            Controls.Add(lblEnterName);
-            lblEnterName.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            lblEnterName.ForeColor = System.Drawing.Color.Crimson;
-            lblEnterName.Text = "ENTER NAME";
-            lblEnterName.SetBounds(410, 225, 200, 50);
-
-            Controls.Add(txtBoxUserName);
-            txtBoxUserName.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            txtBoxUserName.ForeColor = System.Drawing.Color.Crimson;
-            txtBoxUserName.MaxLength = 3;
-            txtBoxUserName.TextAlign = HorizontalAlignment.Center;
-            txtBoxUserName.SetBounds(460, 275, 75, 100);
-            txtBoxUserName.KeyDown += (sender, e) => TxtBoxUserName_Enter(sender, e, lblEnterName, lblHighScores, totalScore, highScoreScores, newHighScoreIndex, btnPlayAgain);
-
         }
-    }
 
-    static void TxtBoxUserName_Enter(object sender, KeyEventArgs e, Label lbl, Label[] lblName, int score, int[] highScoreScores, int index, Button playAgain)
+        void DisplayHighScoreData(Label lbl, string name, int score)
+        {
+            if (score == 0)
+            {
+                lbl.Text = name + " : 00000";
+            }
+            else if (score < 10000 && score >= 1000)
+            {
+                lbl.Text = name + " : 0" + score;
+            }
+            else if (score < 1000 && score >= 100)
+            {
+                lbl.Text = name + " : 00" + score;
+            }
+            else if (score < 100 && score >= 10)
+            {
+                lbl.Text = name + " : 000" + score;
+            }
+            else
+            {
+                lbl.Text = name + " : 0000" + score;
+            }
+        }
+
+        void TxtBoxUserName_Enter(object sender, KeyEventArgs e, Label lbl, Label[] lblName, int score, int[] highScoreScores, int index, Button playAgain)
     {
         if (e.KeyCode == Keys.Enter)
         {
             ((Control)sender).Hide();
             lbl.Hide();
-            lblName[index].Text = ((Control)sender).Text + " : " + score;
+                DisplayHighScoreData(lblName[index], ((Control)sender).Text, score);
 
             int currentScore;
 
