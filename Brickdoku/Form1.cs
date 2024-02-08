@@ -19,6 +19,7 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Media;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -236,10 +237,6 @@ namespace Brickdoku
                 if (AI == false)
                 {
                     block.Enabled = true; // highlight is enabled for the event handlers to work
-                }
-                else
-                {
-                    Console.WriteLine("AI!!");
                 }
 
                 block.Visible = true;
@@ -1253,13 +1250,13 @@ namespace Brickdoku
                         {
                             count++;
                         }
-                        if (count == shapes[number].getSize()) // if every block fits on the gird
+                        if (count == shapes[number].getSize()) // if every block fits on the grid
                         {
                             if (shapes[number].getBlockAtIndex(0).BackColor == Color.Gray)
                             {
                                 ColourShape(number);
                             }
-                            Console.WriteLine("true");
+                            //Console.WriteLine("true");
                             if (numberNotPlaceable != 0)
                             {
                                 numberNotPlaceable--;
@@ -1271,7 +1268,7 @@ namespace Brickdoku
                                 
                             }
 
-                            return true;
+                            return true; //placeable[i] == true
                         }
                     }
                     count = 0; // once the whole shape is checked for given values of x and y count is reset to 0
@@ -1279,12 +1276,18 @@ namespace Brickdoku
             }
             GreyOutShape(number);
             numberNotPlaceable++;
-            Console.WriteLine("false");
+            //Console.WriteLine("false");
             Console.WriteLine("Number not placeable: " + numberNotPlaceable);
             Console.WriteLine("Number of shapes: " + numberOfShapes);
             if (numberNotPlaceable == numberOfShapes) // if all remaining shapes are deemed not placeable, the game ends
             {
                 new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                //reset values back to 0 for Ai
+                if (AI == true)
+                {
+                    numberOfShapes = 0;
+                    numberNotPlaceable = 0;
+                }
                 DisplayGameOverScreen();
             }
             return false;
@@ -1294,6 +1297,7 @@ namespace Brickdoku
         {
             int xMod;
             int yMod;
+            int number = Int32.Parse(shape.getBlockAtIndex(0).Text);
 
             for (int i = 0; i < shape.getSize(); i++)
             {
@@ -1308,13 +1312,22 @@ namespace Brickdoku
             numberOfShapes--;
             numberNotPlaceable = 0;
             new System.Threading.ManualResetEvent(false).WaitOne(1000);
+
             CheckComplete();
             DisplayStreakAndCombo(numberOfCompleted);
             CalculateScore(shape, numberOfCompleted, streak);
             RegenerateShapes();
-            
-
-
+            AI = false; // temporarily set to false
+            for (int i = 0; i < 3; i++)
+            {
+                // remove the shape we have  from the generated numbers array by resestting to zero
+                if (placed[i] == false)
+                {
+                    // Console.WriteLine("Checking");
+                    placeable[i] = CheckShapeFits(generatedNumbers[i]);
+                }
+            }
+            AI = true;
         }
 
         /**
@@ -1324,7 +1337,7 @@ namespace Brickdoku
         {
             for (int i = 0; i < shapes[index].getSize(); i++)
             {
-                Console.WriteLine("grey");
+                //Console.WriteLine("grey");
                 shapes[index].getBlockAtIndex(i).BackColor = Color.Gray;
                 shapes[index].getBlockAtIndex(i).ForeColor = Color.Gray;
                 shapes[index].getBlockAtIndex(i).MouseMove -= BtnEvent_MouseMove;
