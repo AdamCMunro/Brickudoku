@@ -1,4 +1,13 @@
-﻿using Brickdoku.Properties;
+﻿/**
+ * Brickudoku grid game by team 4
+ * Team members:
+ * - Adam Munro
+ * - Marylou Das Chagas e Silva
+ * - Laura Clark
+ * 
+ * // await time delay - got from this link - https://stackoverflow.com/questions/24136390/thread-sleep-without-freezing-the-ui#:~:text=The%20simplest%20way%20to%20use,asynchronous%20add%20the%20async%20modifier.&text=Now%20you%20can%20use%20the,asynchronous%20tasks%2C%20in%20your%20case.
+ */
+using Brickdoku.Properties;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -41,14 +50,14 @@ namespace Brickdoku
         bool bgPlaying = false;
 
         Color palePink = ColorTranslator.FromHtml("#ffccd4"); // light pink sqaure colour
-        Color midPink = ColorTranslator.FromHtml("#ff667d"); // light pink sqaure colour
+        Color midPink = ColorTranslator.FromHtml("#ff667d"); // mid pink colour for hovering
         //added for grid interaction
         private bool dragging = false;
         private Shape draggedShape = null;
         private Shape foundShape = null;
         private Point offset;
-        int initX, initY;
 
+        // scoring variables
         int totalScore = 0;
         int numberOfCompleted;
         int streak = 0;
@@ -58,27 +67,13 @@ namespace Brickdoku
 
         Button clickedButton = null;
 
-        int startLeft, startTop;
-
-
         bool[,] gridOccupied = new bool[9, 9]; //keep track of the occupied grid squares
 
-        // label to display combination
-        Label lblCombination = new Label();
-        // label to display streaks
-        Label lblStreak = new Label();
-        // score label
-        Label lblScore = new Label();
-        // score header label
-        Label lblDisplayScore = new Label();
-        // score increase label
-        Label lblScoreIncrease = new Label();
-
-        Point relativePoint;
-
-        int[] xLocations = new int[5];
-        int[] yLocations = new int[5];
-
+        Label lblCombination = new Label(); // label to display combination
+        Label lblStreak = new Label(); // label to display streaks
+        Label lblScore = new Label();   // score label   
+        Label lblDisplayScore = new Label(); // score header label
+        Label lblScoreIncrease = new Label();  // score increase label
 
         Form RulesForm = new Form(); // form for rules
         class Shape
@@ -90,7 +85,8 @@ namespace Brickdoku
 
 
             private List<Point> initialPositions = new List<Point>(); //used to store the postions of the shapes
-            /**method to store the initial positions
+            /**
+             * method to store the initial positions of each of the generated shapes
             */
             public void StoreInitialPositions()
             {
@@ -101,7 +97,9 @@ namespace Brickdoku
                     initialPositions.Add(button.Location);
                 }
             }
-            /** method to restore initial positions
+
+            /** 
+             * method to restore initial positions
               */
             public void RestoreInitialPositions()
             {
@@ -208,6 +206,10 @@ namespace Brickdoku
             shapes[47] = new Shape(5, new int[] { 0, -(generatedSize), -(generatedSize), generatedSize, generatedSize }, new int[] { 0, 0, -(generatedSize), 0, -(generatedSize) }); // 'C' shape rotated 270 degrees
         }
 
+        /**
+         * Create a shape using the the index from the shapes and the x and y positions to place it to
+         */
+
         void GenerateShape(int index, int x, int y) // creates a shape using the data in the shapes array
         {
             for (int i = 0; i < shapes[index].getSize(); i++) // creates a button for each block required to make the shape
@@ -249,6 +251,9 @@ namespace Brickdoku
             }
         }
 
+        /**
+         * Initialise all spaces in the grid to be unoccupied
+         */
         private void InitialiseGridOccupancy()
         {
             for (int i = 0; i < 9; i++)
@@ -427,6 +432,7 @@ namespace Brickdoku
 
         /**
          * Calculate and display streak and combination information
+         * @param numberOfCompleted - the number of completed shapes to be used to calculate streak and combo
          */
         async void DisplayStreakAndCombo(int numberOfCompleted)
         {
@@ -494,7 +500,6 @@ namespace Brickdoku
 
             // Change the colour of the grid square underneath the shape to a different colour 
             btn[gridX, gridY].BackColor = Color.Crimson;
-            btn[gridX, gridY].ForeColor = Color.Crimson;
             gridOccupied[gridX, gridY] = true;
         }
 
@@ -598,11 +603,9 @@ namespace Brickdoku
                     if ((x > 2 && x < 6 && y < 3) || (x < 3 && y > 2 && y < 6) || (x > 5 && y > 2 && y < 6) || (x > 2 && x < 6 && y > 5))
                     {
                         btn[x, y].BackColor = Color.White;
-                        btn[x, y].ForeColor = Color.White;
                     }
                     else
                     {
-                        btn[x, y].ForeColor = palePink;
                         btn[x, y].BackColor = palePink;
                     }
 
@@ -625,19 +628,22 @@ namespace Brickdoku
             }
         }
 
-
+        /**
+         * Event handler for grid buttons
+         * Function to hover the location the button will be placed to when the mouse enters the grid space when a shape is clicked
+         */
         private void Btn_Enter(object sender, EventArgs e)
         {
+            // check if a shape is clicked
             if (clicked == true)
             {
                 // from one button hovered over, get locations of other buttons in the shape and colour
-
                 int x = 0;
                 int y = 0;
                 int xMod;
                 int yMod;
 
-                int number = Int32.Parse(foundShape.getBlockAtIndex(0).Text);
+                int number = Int32.Parse(foundShape.getBlockAtIndex(0).Text); // index shape number
 
                 for (int i = 0; i < 9; i++)
                 {
@@ -660,6 +666,7 @@ namespace Brickdoku
 
                     if (x + xMod >= 0 && x + xMod < 9 && y + yMod >= 0 && y + yMod < 9 && !gridOccupied[x + xMod, y + yMod])
                     {
+                        // set all the grid coordinates that will be under the shaep hover to mid pink
                         btn[x + xMod, y + yMod].BackColor = midPink;
                     }
                 }
@@ -668,28 +675,26 @@ namespace Brickdoku
         }
 
 
-
+        /**
+         * Event handler for the grid buttons to make any hovered grid buttons back to original colour when mouse leaves
+         */
         private void Btn_Leave(object sender, EventArgs e)
         {
             Button hovered = (Button)sender;
-            //hovered.BackColor = Color.White;
-            // for the whole grid, if the color is green change back
+            // for the whole grid, if the color is midPink change back
             for (int y = 0; y < 9; y++)
             {
                 for (int x = 0; x < 9; x++)
                 {
-
                     if (btn[x, y].BackColor == midPink)
                     {
                         // change background colour to white to differentiate squares
                         if ((x > 2 && x < 6 && y < 3) || (x < 3 && y > 2 && y < 6) || (x > 5 && y > 2 && y < 6) || (x > 2 && x < 6 && y > 5))
                         {
                             btn[x, y].BackColor = Color.White;
-                            btn[x, y].ForeColor = Color.White;
                         }
                         else
-                        {
-                            btn[x, y].ForeColor = palePink;
+                        { 
                             btn[x, y].BackColor = palePink;
                         }
                     }
@@ -700,12 +705,13 @@ namespace Brickdoku
 
 
         /**
-         * Event handler for grid buttons. But nothing happens here?
+         * Event handler for grid buttons
+         * When a button is clicked make the hovered shapes filled in and occupied
          */
         private void BtnEvent_Click(object sender, EventArgs e)
         {
             int count = 0;
-            // set all green buttons to be filled and coloured crimson
+            // set all midPink buttons to be filled and coloured crimson
             // keep a count of how many squares are green to compare to shape size
             for (int y = 0; y < 9; y++)
             {
@@ -718,6 +724,7 @@ namespace Brickdoku
                     }
                 }
             }
+            // if the shape is fully on the grid
             if (count == foundShape.getSize())
             {
                 for (int y = 0; y < 9; y++)
@@ -742,7 +749,7 @@ namespace Brickdoku
                 {
                     pop.Play();
                 }
-
+                // set placed to be true for shape that was placed
                 for (int j = 0; j < 3; j++)
                 {
                     if (generatedNumbers[j] == Int32.Parse(foundShape.getBlockAtIndex(0).Text))
@@ -771,7 +778,7 @@ namespace Brickdoku
                 numberNotPlaceable = 0;
                 for (int i = 0; i < 3; i++)
                 {
-                    // remove the shape we have  from the generated numbers array by resestting to zero
+                    // re check if other remaining shapes fit 
                     if (placed[i] == false)
                     {
                         // Console.WriteLine("Checking");
@@ -788,6 +795,9 @@ namespace Brickdoku
 
         }
 
+        /**
+         * Event handler for start button to start the game 
+         */
         private void BtnStart_Click(object sender, EventArgs e)
         {
             // when start button is clicked, hide all the items in the current menu screen
@@ -805,7 +815,8 @@ namespace Brickdoku
         }
 
         /**
-         * Set information for the two labels needed for streaks and combinations
+         * Set information for the labels needed for the game 
+         * set up title, combo, streak, and scoring labels and place and position them
          */
         void SetUpLabels()
         {
@@ -868,7 +879,7 @@ namespace Brickdoku
                 placed[i] = false;
                 Random random = new Random();
                 int number = random.Next(48); // generate random number < 48
-                                              // check number is not already in list of already generated
+                 // check number is not already in list of already generated
                 while (generatedNumbers.Contains(number))
                 {
                     // if it already contains the number generate a new number till a unique one is found
@@ -904,12 +915,12 @@ namespace Brickdoku
 
         /**
          * Function to check for a complete line or square
-         * Keep a list of rows, columns and sqaures that are complete
+         * Update a list of rows, columns and sqaures that are complete
          * Keep a total of how many were completed to check for streaks and comboss
          */
         void CheckComplete()
         {
-            // clear rows, columns and squares
+            // clear previous rows, columns and squares
             rows.Clear();
             squares.Clear();
             columns.Clear();
@@ -923,7 +934,6 @@ namespace Brickdoku
             {
                 for (int x = 0; x < 9; x++)
                 {
-                    //btn[x, y].BackColor = Color.LightGreen;
                     if (gridOccupied[x, y] == false)
                     {
                         // column x must therefore also be empty so don't check it later
@@ -949,7 +959,6 @@ namespace Brickdoku
                 }
                 for (int y = 0; y < 9; y++)
                 {
-                    //btn[x, y].BackColor = Color.Green;
                     if (gridOccupied[x, y] == false)
                     {
                         //Console.WriteLine("false" + x + "," + y);
@@ -1001,7 +1010,6 @@ namespace Brickdoku
                         // for each column in the square
                         for (int y = 0; y < 9; y++)
                         {
-                            //btn[x, y].BackColor = Color.DarkGreen;
                             // for squares 0,1,2 y < 2
                             // if s is one of these values and x > 2, continue
                             if ((s == 0 || s == 1 || s == 2) && y > 2)
@@ -1036,6 +1044,7 @@ namespace Brickdoku
                                 {
                                     for (int j = 0; j < 3; j++)
                                     {
+                                        // store coordinates of that are in the square to then re colour the coordinates later
                                         squares.Add(new Tuple<int, int>(x - i, y - j));
                                     }
                                 }
@@ -1062,18 +1071,16 @@ namespace Brickdoku
             {
                 for (int j = 0; j < 9; j++)
                 {
-                    new System.Threading.ManualResetEvent(false).WaitOne(30);
+                    new System.Threading.ManualResetEvent(false).WaitOne(30); // pause between removing to animate slightly
                     gridOccupied[j, rows[i]] = false;
                     // set colour back to original
                     if ((rows[i] > 2 && rows[i] < 6 && (j < 3 || j > 5)) || (j > 2 && j < 6 && (rows[i] < 3 || rows[i] > 5)))
                     {
                         btn[j, rows[i]].BackColor = Color.White;
-                        btn[j, rows[i]].ForeColor = Color.White;
                     }
                     else
                     {
                         btn[j, rows[i]].BackColor = palePink;
-                        btn[j, rows[i]].ForeColor = palePink;
                     }
                 }
             }
@@ -1088,12 +1095,10 @@ namespace Brickdoku
                     if ((j > 2 && j < 6 && (columns[i] < 3 || columns[i] > 5)) || (columns[i] > 2 && columns[i] < 6 && (j < 3 || j > 5)))
                     {
                         btn[columns[i], j].BackColor = Color.White;
-                        btn[columns[i], j].ForeColor = Color.White;
                     }
                     else
                     {
                         btn[columns[i], j].BackColor = palePink;
-                        btn[columns[i], j].ForeColor = palePink;
                     }
                 }
             }
@@ -1107,34 +1112,31 @@ namespace Brickdoku
                 gridOccupied[x, y] = false;
                 if ((x > 2 && x < 6 && y < 3) || (x < 3 && y > 2 && y < 6) || (x > 5 && y > 2 && y < 6) || (x > 2 && x < 6 && y > 5))
                 {
-                    btn[x, y].ForeColor = Color.White;
                     btn[x, y].BackColor = Color.White;
                 }
                 else
                 {
                     btn[x, y].BackColor = palePink;
-                    btn[x, y].ForeColor = palePink;
                 }
             }
         }
 
         /**
-        * Take in the shape placed and calculate the score
-        * Also need the streak and combinations info
+        * Calculate the total score by adding together the number of pieces in the shape, the combination, and the streak
+        * Update the score label to display the score 
         */
         async void CalculateScore(Shape shape, int numComplete, int streak)
         {
             int score = 0;
-            score += shape.getSize();
+            score += shape.getSize(); // add size of shape to score
             score += 18 * numComplete; // add completed/combo bonus
             if (streak > 1)
             {
                 score += 27; // add 27 for a streak bonus
             }
-
+            
             totalScore += score;
             lblScore.Text = totalScore.ToString();
-
 
             // if score is greater than zero, display label showing what it is increased by
             if (score > 0)
@@ -1147,12 +1149,17 @@ namespace Brickdoku
             }
         }
 
+        /**
+         * Event handler for exit button to exit the game
+         */
         private void BtnExit_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        // The volume control button
+        /**
+         * Mute button to play or mute background music and sound effects
+         */
         private void BtnMute_Click(object sender, EventArgs e)
         {
             // when clicked if playing, volume turns off, and image changes to muted image
@@ -1164,6 +1171,7 @@ namespace Brickdoku
                 BtnMute.Text = "m";
                 try
                 {
+                    // change image on button to muted
                     BtnMute.BackgroundImage = Properties.Resources.muted;
                 }
                 catch (System.IO.FileNotFoundException)
@@ -1178,6 +1186,7 @@ namespace Brickdoku
                 BtnMute.Text = "p";
                 try
                 {
+                    // change image on button to playing
                     BtnMute.BackgroundImage = Properties.Resources.playing;
                 }
                 catch (System.IO.FileNotFoundException)
@@ -1518,6 +1527,11 @@ namespace Brickdoku
 
             }
         }
+
+        /**
+         * Event handler for play again button
+         * When play again button is clicked, hide the game over screen, reset all data back to initial values and display the game screen
+         */
         private void BtnPlayAgain_Click(object sender, EventArgs e, Label lblGameOver, Button btnPlayAgain, Button btnExit, Label finalScore, Label[] highScores, Label gameOverHead)
         {
             // when start button is clicked, hide all the items in the current menu screen
@@ -1610,17 +1624,28 @@ namespace Brickdoku
             }
         }
 
+
+        /**
+         * Exit option in the menu to close the program
+         */
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
         }
 
+        /**
+         * Event handler for about option in the menu
+         * Shows a message box with basic information about the game
+         */
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DialogResult result;
             result = MessageBox.Show("Brickudoku by Adam Munro, Marylou Das Chagas e Silva and Laura Clark, 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        /**
+         * Set up all needed variables to display the rules 
+         */
         void RulesSetUp()
         {
             RulesForm.AutoScroll = true; // make scroll automatically
@@ -1634,7 +1659,6 @@ namespace Brickdoku
             RulesForm.MinimumSize = new System.Drawing.Size(800, 500);
             // center to center of the parent form
             RulesForm.StartPosition = FormStartPosition.CenterParent;
-            //RulesForm.AutoScroll = true;
 
             Label LblRulesTitle = new Label();
             LblRulesTitle.Font = new System.Drawing.Font("OCR A Extended", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1643,9 +1667,9 @@ namespace Brickdoku
             LblRulesTitle.SetBounds(50, 20, 700, 50);
             RulesForm.Controls.Add(LblRulesTitle);
 
-            // make a back button
+           
 
-            // rules
+            // gameplay
             Label LblPlayTitle = new Label();
             LblPlayTitle.Text = "Playing the Game: ";
             LblPlayTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1667,15 +1691,15 @@ namespace Brickdoku
             LblPlayContinued.Text = " Continue to place the rest of your blocks. Once you have used all of your shapes, 3 new shapes for you to place will be generated. The aim of the game is to get as high a score as possible.";
             RulesForm.Controls.Add(LblPlayContinued);
 
-            // rules
+            // points
             Label LblPointsTitle = new Label();
             LblPointsTitle.Text = "Scoring Points: ";
             LblPointsTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             LblPointsTitle.ForeColor = System.Drawing.Color.Crimson;
             LblPointsTitle.SetBounds(50, 300, 400, 30);
-            RulesForm.Controls.Add(LblPointsTitle); //250
+            RulesForm.Controls.Add(LblPointsTitle); 
 
-            Label LblPoints = new Label(); //290
+            Label LblPoints = new Label(); 
             LblPoints.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             LblPoints.ForeColor = System.Drawing.Color.Black;
             LblPoints.SetBounds(50, 340, 700, 100);
@@ -1684,20 +1708,22 @@ namespace Brickdoku
 
             CreateGamePlayImages(); // images to demonstrate gameplay
 
-            Label LblEndTitle = new Label(); // 580
+            // end game
+            Label LblEndTitle = new Label(); 
             LblEndTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             LblEndTitle.ForeColor = System.Drawing.Color.Crimson;
             LblEndTitle.SetBounds(50, 630, 400, 30);
             LblEndTitle.Text = "Ending the Game: ";
             RulesForm.Controls.Add(LblEndTitle);
 
-            Label LblEnd = new Label(); // 620
+            Label LblEnd = new Label(); 
             LblEnd.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             LblEnd.ForeColor = System.Drawing.Color.Black;
             LblEnd.SetBounds(50, 670, 700, 150);
             LblEnd.Text = "The game will automatically end when you have no pieces left to play that will fit. Pieces that generate and will not fit are coloured grey and you are unable to move them. The game checks after each piece played and updates which pieces are playable. If you have no playable pieces, the game ends. Once the game ends you will see a game over screen with your score, previous high scores, and an option to exit or play the game again. If you have made it onto the top 5 high scores, the list will be updated and your score will be added to the high scores list. You can also choose to exit the game at any point by choosing the menu option or clicking the cross.";
             RulesForm.Controls.Add(LblEnd);
 
+            // sound
             Label LblSoundTitle = new Label();
             LblSoundTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             LblSoundTitle.ForeColor = System.Drawing.Color.Crimson;
@@ -1712,6 +1738,7 @@ namespace Brickdoku
             LblSound.Text = "The background music that is playing can be muted and un-muted at any point in the game by clicking the mute button in the top right hand corner of the screen. Muting the background music will also mute the sound effects that happen during gameplay.";
             RulesForm.Controls.Add(LblSound);
 
+            // AI
             Label LblAITitle = new Label();
             LblAITitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             LblAITitle.ForeColor = System.Drawing.Color.Crimson;
@@ -1723,7 +1750,7 @@ namespace Brickdoku
             LblAI.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             LblAI.ForeColor = System.Drawing.Color.Black;
             LblAI.SetBounds(50, 1000, 700, 60);
-            LblAI.Text = "The AI mode can be selected to play from the starting screen. The AI will play automatically, trying to get as high a score as possible. If it gets a high score it will be saved to the high score list under the name BRK.";
+            LblAI.Text = "The AI mode can be selected to play from the starting screen. The AI will play automatically, trying to get as high a score as possible. The AI is a very basic initial version and it doesn't always work!";
             RulesForm.Controls.Add(LblAI);
 
             // create back button
@@ -1788,13 +1815,17 @@ namespace Brickdoku
             RulesForm.Controls.Add(comboImage);
         }
 
+        /**
+         * Event handler for the AI button
+         * When AI button clicked launch the AI version of the game
+         */
         private void BtnAI_Click(object sender, EventArgs e)
         {
             // initialise game the same as start game does
             BtnExit.Hide();
             BtnStart.Hide();
             BtnAI.Hide();
-            AI = true; // make shapes non clickable 
+            AI = true; // so other parts of the game know that it is playing the AI version
             this.BackgroundImage = null; // remove image from gameplay screen
             this.BackColor = Color.Linen;
             menuStrip1.BackColor = Color.Linen;
@@ -1802,10 +1833,6 @@ namespace Brickdoku
             SetUpLabels();
             InitialiseGridOccupancy();
             GenerateRandomShapeNumbers();
-
-
-
-            // for each shape, go through and place in the first available space
         }
     }
 }
