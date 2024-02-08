@@ -38,6 +38,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rulesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.BtnAI = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.MXP)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -47,9 +48,9 @@
             this.BtnStart.BackColor = System.Drawing.Color.LightPink;
             this.BtnStart.Font = new System.Drawing.Font("OCR A Extended", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.BtnStart.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.BtnStart.Location = new System.Drawing.Point(242, 256);
+            this.BtnStart.Location = new System.Drawing.Point(170, 249);
             this.BtnStart.Name = "BtnStart";
-            this.BtnStart.Size = new System.Drawing.Size(220, 150);
+            this.BtnStart.Size = new System.Drawing.Size(180, 120);
             this.BtnStart.TabIndex = 1;
             this.BtnStart.Text = "Start Game";
             this.BtnStart.UseVisualStyleBackColor = false;
@@ -58,9 +59,9 @@
             // BtnExit
             // 
             this.BtnExit.BackColor = System.Drawing.Color.LightPink;
-            this.BtnExit.Location = new System.Drawing.Point(514, 256);
+            this.BtnExit.Location = new System.Drawing.Point(591, 249);
             this.BtnExit.Name = "BtnExit";
-            this.BtnExit.Size = new System.Drawing.Size(220, 150);
+            this.BtnExit.Size = new System.Drawing.Size(180, 120);
             this.BtnExit.TabIndex = 2;
             this.BtnExit.Text = "Exit";
             this.BtnExit.UseVisualStyleBackColor = false;
@@ -101,7 +102,7 @@
             this.optionsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(978, 31);
+            this.menuStrip1.Size = new System.Drawing.Size(978, 36);
             this.menuStrip1.TabIndex = 5;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -113,29 +114,40 @@
             this.exitToolStripMenuItem});
             this.optionsToolStripMenuItem.Font = new System.Drawing.Font("OCR A Extended", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(110, 27);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(110, 32);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(170, 34);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // rulesToolStripMenuItem
             // 
             this.rulesToolStripMenuItem.Name = "rulesToolStripMenuItem";
-            this.rulesToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+            this.rulesToolStripMenuItem.Size = new System.Drawing.Size(170, 34);
             this.rulesToolStripMenuItem.Text = "Rules";
             this.rulesToolStripMenuItem.Click += new System.EventHandler(this.rulesToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(170, 34);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // BtnAI
+            // 
+            this.BtnAI.BackColor = System.Drawing.Color.LightPink;
+            this.BtnAI.Location = new System.Drawing.Point(385, 249);
+            this.BtnAI.Name = "BtnAI";
+            this.BtnAI.Size = new System.Drawing.Size(180, 120);
+            this.BtnAI.TabIndex = 6;
+            this.BtnAI.Text = "Play AI";
+            this.BtnAI.UseVisualStyleBackColor = false;
+            this.BtnAI.Click += new System.EventHandler(this.BtnAI_Click);
             // 
             // Brickudoku
             // 
@@ -144,6 +156,7 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(978, 624);
+            this.Controls.Add(this.BtnAI);
             this.Controls.Add(this.MXP);
             this.Controls.Add(this.BtnMute);
             this.Controls.Add(this.BtnExit);
@@ -179,6 +192,7 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rulesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.Button BtnAI;
     }
 }
 
