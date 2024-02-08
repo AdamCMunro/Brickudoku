@@ -1607,102 +1607,123 @@ namespace Brickdoku
 
     void RulesSetUp()
     {
-        RulesForm.Icon = Properties.Resources.BrickudokuIcon;
-        RulesForm.Text = "Brickudoku Rules";
-        RulesForm.BackColor = Color.Linen;
-        RulesForm.MaximizeBox = false;
-        RulesForm.MinimizeBox = false;
-        RulesForm.MaximumSize = new System.Drawing.Size(800, 500);
-        RulesForm.MinimumSize = new System.Drawing.Size(800, 500);
-        // center to center of the parent form
-        RulesForm.StartPosition = FormStartPosition.CenterParent;
-        RulesForm.AutoScroll = true;
+            RulesForm.AutoScroll = true; // make scroll automatically
 
-        Label LblRulesTitle = new Label();
-        LblRulesTitle.Font = new System.Drawing.Font("OCR A Extended", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        LblRulesTitle.Text = "Brickudoku Rules";
-        LblRulesTitle.ForeColor = System.Drawing.Color.Crimson;
-        LblRulesTitle.SetBounds(50, 20, 700, 50);
-        RulesForm.Controls.Add(LblRulesTitle);
+            RulesForm.Icon = Properties.Resources.BrickudokuIcon;
+            RulesForm.Text = "Brickudoku Rules";
+            RulesForm.BackColor = Color.Linen;
+            RulesForm.MaximizeBox = false;
+            RulesForm.MinimizeBox = false;
+            RulesForm.MaximumSize = new System.Drawing.Size(800, 500);
+            RulesForm.MinimumSize = new System.Drawing.Size(800, 500);
+            // center to center of the parent form
+            RulesForm.StartPosition = FormStartPosition.CenterParent;
+            //RulesForm.AutoScroll = true;
 
-        // make a back button
+            Label LblRulesTitle = new Label();
+            LblRulesTitle.Font = new System.Drawing.Font("OCR A Extended", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblRulesTitle.Text = "Brickudoku Rules";
+            LblRulesTitle.ForeColor = System.Drawing.Color.Crimson;
+            LblRulesTitle.SetBounds(50, 20, 700, 50);
+            RulesForm.Controls.Add(LblRulesTitle);
 
-        // rules
-        Label LblPlayTitle = new Label();
-        LblPlayTitle.Text = "Playing the Game: ";
-        LblPlayTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        LblPlayTitle.ForeColor = System.Drawing.Color.Crimson;
-        LblPlayTitle.SetBounds(50, 100, 400, 30);
-        RulesForm.Controls.Add(LblPlayTitle);
+            // make a back button
 
-        Label LblPlay = new Label();
-        LblPlay.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        LblPlay.ForeColor = System.Drawing.Color.Black;
-        LblPlay.SetBounds(50, 140, 700, 100);
-        LblPlay.Text = "Once you have started a new game, 3 different blocks will be automatically generated at the Left Hand Side. Click on a block and drag it to the point on the grid where you would like to place it. Continue to place the rest of your blocks. Once you have used all of your shapes, 3 new shapes for you to place will be generated. The aim of the game is to get as high a score as possible.";
-        RulesForm.Controls.Add(LblPlay);
+            // rules
+            Label LblPlayTitle = new Label();
+            LblPlayTitle.Text = "Playing the Game: ";
+            LblPlayTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblPlayTitle.ForeColor = System.Drawing.Color.Crimson;
+            LblPlayTitle.SetBounds(50, 100, 400, 30);
+            RulesForm.Controls.Add(LblPlayTitle);
 
-        // rules
-        Label LblPointsTitle = new Label();
-        LblPointsTitle.Text = "Scoring Points: ";
-        LblPointsTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        LblPointsTitle.ForeColor = System.Drawing.Color.Crimson;
-        LblPointsTitle.SetBounds(50, 250, 400, 30);
-        RulesForm.Controls.Add(LblPointsTitle);
+            Label LblPlay = new Label();
+            LblPlay.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblPlay.ForeColor = System.Drawing.Color.Black;
+            LblPlay.SetBounds(50, 140, 700, 100);
+            LblPlay.Text = "Once you have started a new game, 3 different blocks will be automatically generated at the Left Hand Side. To place the blocks you have two options: 1. Click on a block and drag it to the point on the grid where you would like to place it. 2. Click on a block and hover over the location on the grid where you would like to place it. The location the shape will be placed to will be highlighted pink. Click the grid at a position where the shape is fully placeable to place it.";
+            RulesForm.Controls.Add(LblPlay);
 
-        Label LblPoints = new Label();
-        LblPoints.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        LblPoints.ForeColor = System.Drawing.Color.Black;
-        LblPoints.SetBounds(50, 290, 700, 100);
-        LblPoints.Text = "To score points, place blocks on the grid. For more points, aim to complete rows, columns and squares. A complete sqaure must be a 3x3 sqaure on one of the squares outlined in the grid background. You can score extra points by getting a combo or a streak. A combo is when you clear multiple rows, columns or squares in one turn. A streak is when you complete a row, column or square multiple turns in a row. See the pictures below for examples of a row, column, square and combo: ";
-        RulesForm.Controls.Add(LblPoints);
+            Label LblPlayContinued = new Label();
+            LblPlayContinued.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblPlayContinued.ForeColor = System.Drawing.Color.Black;
+            LblPlayContinued.SetBounds(50, 240, 700, 50);
+            LblPlayContinued.Text = " Continue to place the rest of your blocks. Once you have used all of your shapes, 3 new shapes for you to place will be generated. The aim of the game is to get as high a score as possible.";
+            RulesForm.Controls.Add(LblPlayContinued);
 
-        CreateGamePlayImages(); // images to demonstrate gameplay
+            // rules
+            Label LblPointsTitle = new Label();
+            LblPointsTitle.Text = "Scoring Points: ";
+            LblPointsTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblPointsTitle.ForeColor = System.Drawing.Color.Crimson;
+            LblPointsTitle.SetBounds(50, 300, 400, 30);
+            RulesForm.Controls.Add(LblPointsTitle); //250
 
-        Label LblEndTitle = new Label();
-        LblEndTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        LblEndTitle.ForeColor = System.Drawing.Color.Crimson;
-        LblEndTitle.SetBounds(50, 580, 400, 30);
-        LblEndTitle.Text = "Ending the Game: ";
-        RulesForm.Controls.Add(LblEndTitle);
+            Label LblPoints = new Label(); //290
+            LblPoints.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblPoints.ForeColor = System.Drawing.Color.Black;
+            LblPoints.SetBounds(50, 340, 700, 100);
+            LblPoints.Text = "To score points, place blocks on the grid. For more points, aim to complete rows, columns and squares. A complete sqaure must be a 3x3 sqaure on one of the squares outlined in the grid background. You can score extra points by getting a combo or a streak. A combo is when you clear multiple rows, columns or squares in one turn. A streak is when you complete a row, column or square multiple turns in a row. See the pictures below for examples of a row, column, square and combo: ";
+            RulesForm.Controls.Add(LblPoints);
 
-        Label LblEnd = new Label();
-        LblEnd.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        LblEnd.ForeColor = System.Drawing.Color.Black;
-        LblEnd.SetBounds(50, 620, 700, 150);
-        LblEnd.Text = "The game will automatically end when you have no pieces left to play that will fit. Pieces that generate and will not fit are coloured grey and you are unable to move them. The game checks after each piece played and updates which pieces are playable. If you have no playable pieces, the game ends. Once the game ends you will see a game over screen with your score, previous high scores, and an option to exit or play the game again. If you have made it onto the top 5 high scores, the list will be updated and your score will be added to the high scores list. You can also choose to exit the game at any point by choosing the menu option or clicking the cross.";
-        RulesForm.Controls.Add(LblEnd);
+            CreateGamePlayImages(); // images to demonstrate gameplay
 
-        Label LblSoundTitle = new Label();
-        LblSoundTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        LblSoundTitle.ForeColor = System.Drawing.Color.Crimson;
-        LblSoundTitle.SetBounds(50, 800, 400, 30);
-        LblSoundTitle.Text = "Music and Sound Effects: ";
-        RulesForm.Controls.Add(LblSoundTitle);
+            Label LblEndTitle = new Label(); // 580
+            LblEndTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblEndTitle.ForeColor = System.Drawing.Color.Crimson;
+            LblEndTitle.SetBounds(50, 630, 400, 30);
+            LblEndTitle.Text = "Ending the Game: ";
+            RulesForm.Controls.Add(LblEndTitle);
 
-        Label LblSound = new Label();
-        LblSound.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        LblSound.ForeColor = System.Drawing.Color.Black;
-        LblSound.SetBounds(50, 840, 700, 60);
-        LblSound.Text = "The background music that is playing can be muted and un-muted at any point in the game by clicking the mute button in the top right hand corner of the screen. Muting the background music will also mute the sound effects that happen during gameplay.";
-        RulesForm.Controls.Add(LblSound);
+            Label LblEnd = new Label(); // 620
+            LblEnd.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblEnd.ForeColor = System.Drawing.Color.Black;
+            LblEnd.SetBounds(50, 670, 700, 150);
+            LblEnd.Text = "The game will automatically end when you have no pieces left to play that will fit. Pieces that generate and will not fit are coloured grey and you are unable to move them. The game checks after each piece played and updates which pieces are playable. If you have no playable pieces, the game ends. Once the game ends you will see a game over screen with your score, previous high scores, and an option to exit or play the game again. If you have made it onto the top 5 high scores, the list will be updated and your score will be added to the high scores list. You can also choose to exit the game at any point by choosing the menu option or clicking the cross.";
+            RulesForm.Controls.Add(LblEnd);
 
-        // create back button
-        Button BtnRulesClose = new Button();
-        BtnRulesClose.Text = "Close Rules";
-        BtnRulesClose.SetBounds(50, 920, 125, 50);
-        BtnRulesClose.Font = new System.Drawing.Font("OCR A Extended", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        BtnRulesClose.BackColor = Color.LightPink;
-        BtnRulesClose.Click += new EventHandler(this.BtnRulesClose_Click);
-        RulesForm.Controls.Add(BtnRulesClose);
+            Label LblSoundTitle = new Label();
+            LblSoundTitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblSoundTitle.ForeColor = System.Drawing.Color.Crimson;
+            LblSoundTitle.SetBounds(50, 840, 500, 30);
+            LblSoundTitle.Text = "Music and Sound Effects: ";
+            RulesForm.Controls.Add(LblSoundTitle);
 
-        // add blank space underneath
-        Label LblSpacing = new Label();
-        LblSpacing.SetBounds(0, 970, 800, 30);
-        RulesForm.Controls.Add(LblSpacing);
+            Label LblSound = new Label();
+            LblSound.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblSound.ForeColor = System.Drawing.Color.Black;
+            LblSound.SetBounds(50, 880, 700, 60);
+            LblSound.Text = "The background music that is playing can be muted and un-muted at any point in the game by clicking the mute button in the top right hand corner of the screen. Muting the background music will also mute the sound effects that happen during gameplay.";
+            RulesForm.Controls.Add(LblSound);
 
+            Label LblAITitle = new Label();
+            LblAITitle.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblAITitle.ForeColor = System.Drawing.Color.Crimson;
+            LblAITitle.SetBounds(50, 960, 400, 30);
+            LblAITitle.Text = "AI Mode: ";
+            RulesForm.Controls.Add(LblAITitle);
 
-    }
+            Label LblAI = new Label();
+            LblAI.Font = new System.Drawing.Font("Palatino Linotype", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            LblAI.ForeColor = System.Drawing.Color.Black;
+            LblAI.SetBounds(50, 1000, 700, 60);
+            LblAI.Text = "The AI mode can be selected to play from the starting screen. The AI will play automatically, trying to get as high a score as possible. If it gets a high score it will be saved to the high score list under the name BRK.";
+            RulesForm.Controls.Add(LblAI);
+
+            // create back button
+            Button BtnRulesClose = new Button();
+            BtnRulesClose.Text = "Close Rules";
+            BtnRulesClose.SetBounds(50, 1100, 125, 50);
+            BtnRulesClose.Font = new System.Drawing.Font("OCR A Extended", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            BtnRulesClose.BackColor = Color.LightPink;
+            BtnRulesClose.Click += new EventHandler(this.BtnRulesClose_Click);
+            RulesForm.Controls.Add(BtnRulesClose);
+
+            // add blank space underneath
+            Label LblSpacing = new Label();
+            LblSpacing.SetBounds(0, 1160, 800, 30);
+            RulesForm.Controls.Add(LblSpacing);
+        }
 
     /**
      * Event handler for button to close the rules page
@@ -1728,25 +1749,25 @@ namespace Brickdoku
     {
         PictureBox rowImage = new PictureBox();
         rowImage.Image = Properties.Resources.row;
-        rowImage.SetBounds(50, 400, 150, 150);
+        rowImage.SetBounds(50, 450, 150, 150);
         rowImage.SizeMode = PictureBoxSizeMode.StretchImage;
         RulesForm.Controls.Add(rowImage);
 
         PictureBox colImage = new PictureBox();
         colImage.Image = Properties.Resources.column;
-        colImage.SetBounds(230, 400, 150, 150);
+        colImage.SetBounds(230, 450, 150, 150);
         colImage.SizeMode = PictureBoxSizeMode.StretchImage;
         RulesForm.Controls.Add(colImage);
 
         PictureBox squareImage = new PictureBox();
         squareImage.Image = Properties.Resources.square;
-        squareImage.SetBounds(410, 400, 150, 150);
+        squareImage.SetBounds(410, 450, 150, 150);
         squareImage.SizeMode = PictureBoxSizeMode.StretchImage;
         RulesForm.Controls.Add(squareImage);
 
         PictureBox comboImage = new PictureBox();
         comboImage.Image = Properties.Resources.combo;
-        comboImage.SetBounds(590, 400, 150, 150);
+        comboImage.SetBounds(590, 450, 150, 150);
         comboImage.SizeMode = PictureBoxSizeMode.StretchImage;
         RulesForm.Controls.Add(comboImage);
     }
