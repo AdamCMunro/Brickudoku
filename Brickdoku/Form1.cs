@@ -500,7 +500,6 @@ namespace Brickdoku
 
             // Change the colour of the grid square underneath the shape to a different colour 
             btn[gridX, gridY].BackColor = Color.Crimson;
-            btn[gridX, gridY].ForeColor = Color.Crimson;
             gridOccupied[gridX, gridY] = true;
         }
 
@@ -604,11 +603,9 @@ namespace Brickdoku
                     if ((x > 2 && x < 6 && y < 3) || (x < 3 && y > 2 && y < 6) || (x > 5 && y > 2 && y < 6) || (x > 2 && x < 6 && y > 5))
                     {
                         btn[x, y].BackColor = Color.White;
-                        btn[x, y].ForeColor = Color.White;
                     }
                     else
                     {
-                        btn[x, y].ForeColor = palePink;
                         btn[x, y].BackColor = palePink;
                     }
 
@@ -695,11 +692,9 @@ namespace Brickdoku
                         if ((x > 2 && x < 6 && y < 3) || (x < 3 && y > 2 && y < 6) || (x > 5 && y > 2 && y < 6) || (x > 2 && x < 6 && y > 5))
                         {
                             btn[x, y].BackColor = Color.White;
-                            btn[x, y].ForeColor = Color.White;
                         }
                         else
-                        {
-                            btn[x, y].ForeColor = palePink;
+                        { 
                             btn[x, y].BackColor = palePink;
                         }
                     }
@@ -939,7 +934,6 @@ namespace Brickdoku
             {
                 for (int x = 0; x < 9; x++)
                 {
-                    //btn[x, y].BackColor = Color.LightGreen;
                     if (gridOccupied[x, y] == false)
                     {
                         // column x must therefore also be empty so don't check it later
@@ -965,7 +959,6 @@ namespace Brickdoku
                 }
                 for (int y = 0; y < 9; y++)
                 {
-                    //btn[x, y].BackColor = Color.Green;
                     if (gridOccupied[x, y] == false)
                     {
                         //Console.WriteLine("false" + x + "," + y);
@@ -1084,12 +1077,10 @@ namespace Brickdoku
                     if ((rows[i] > 2 && rows[i] < 6 && (j < 3 || j > 5)) || (j > 2 && j < 6 && (rows[i] < 3 || rows[i] > 5)))
                     {
                         btn[j, rows[i]].BackColor = Color.White;
-                        btn[j, rows[i]].ForeColor = Color.White;
                     }
                     else
                     {
                         btn[j, rows[i]].BackColor = palePink;
-                        btn[j, rows[i]].ForeColor = palePink;
                     }
                 }
             }
@@ -1104,12 +1095,10 @@ namespace Brickdoku
                     if ((j > 2 && j < 6 && (columns[i] < 3 || columns[i] > 5)) || (columns[i] > 2 && columns[i] < 6 && (j < 3 || j > 5)))
                     {
                         btn[columns[i], j].BackColor = Color.White;
-                        btn[columns[i], j].ForeColor = Color.White;
                     }
                     else
                     {
                         btn[columns[i], j].BackColor = palePink;
-                        btn[columns[i], j].ForeColor = palePink;
                     }
                 }
             }
@@ -1123,13 +1112,11 @@ namespace Brickdoku
                 gridOccupied[x, y] = false;
                 if ((x > 2 && x < 6 && y < 3) || (x < 3 && y > 2 && y < 6) || (x > 5 && y > 2 && y < 6) || (x > 2 && x < 6 && y > 5))
                 {
-                    btn[x, y].ForeColor = Color.White;
                     btn[x, y].BackColor = Color.White;
                 }
                 else
                 {
                     btn[x, y].BackColor = palePink;
-                    btn[x, y].ForeColor = palePink;
                 }
             }
         }
