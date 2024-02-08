@@ -32,15 +32,15 @@
             this.BtnStart = new System.Windows.Forms.Button();
             this.BtnExit = new System.Windows.Forms.Button();
             this.BtnMute = new System.Windows.Forms.Button();
-            this.MXP = new AxWMPLib.AxWindowsMediaPlayer();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rulesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.BtnAI = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.MXP)).BeginInit();
+            this.MXP = new AxWMPLib.AxWindowsMediaPlayer();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MXP)).BeginInit();
             this.SuspendLayout();
             // 
             // BtnStart
@@ -83,15 +83,6 @@
             this.BtnMute.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.BtnMute.UseVisualStyleBackColor = true;
             this.BtnMute.Click += new System.EventHandler(this.BtnMute_Click);
-            // 
-            // MXP
-            // 
-            this.MXP.Enabled = true;
-            this.MXP.Location = new System.Drawing.Point(61, 77);
-            this.MXP.Name = "MXP";
-            this.MXP.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("MXP.OcxState")));
-            this.MXP.Size = new System.Drawing.Size(166, 63);
-            this.MXP.TabIndex = 4;
             // 
             // menuStrip1
             // 
@@ -149,13 +140,22 @@
             this.BtnAI.UseVisualStyleBackColor = false;
             this.BtnAI.Click += new System.EventHandler(this.BtnAI_Click);
             // 
+            // MXP
+            // 
+            this.MXP.Enabled = true;
+            this.MXP.Location = new System.Drawing.Point(61, 77);
+            this.MXP.Name = "MXP";
+            this.MXP.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("MXP.OcxState")));
+            this.MXP.Size = new System.Drawing.Size(166, 63);
+            this.MXP.TabIndex = 4;
+            // 
             // Brickudoku
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(978, 624);
+            this.ClientSize = new System.Drawing.Size(978, 644);
             this.Controls.Add(this.BtnAI);
             this.Controls.Add(this.MXP);
             this.Controls.Add(this.BtnMute);
@@ -167,16 +167,16 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(6);
-            this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(1000, 700);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(1000, 680);
             this.Name = "Brickudoku";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Brickudoku";
             this.Load += new System.EventHandler(this.Form1_Load_1);
-            ((System.ComponentModel.ISupportInitialize)(this.MXP)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MXP)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
