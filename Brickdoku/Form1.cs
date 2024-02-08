@@ -1241,6 +1241,12 @@ namespace Brickdoku
                         {
                             numberNotPlaceable--;
                         }
+
+                        if (AI)
+                        {
+                            AiPlaceShape(x, y, shapes[number]);
+                        }
+
                         return true;
                     }
                 }
@@ -1259,6 +1265,22 @@ namespace Brickdoku
         }
         return false;
     }
+
+    async void AiPlaceShape(int x, int y, Shape shape)
+        {
+            int xMod;
+            int yMod;
+
+            for (int i = 0; i < shape.getSize(); i++)
+            {
+                xMod = shape.getXOffset(i) / generatedSize;
+                yMod = shape.getYOffset(i) / generatedSize;
+
+                btn[x + xMod, y + yMod].BackColor = Color.Crimson;
+                gridOccupied[x + xMod, y + yMod] = true;
+                await Task.Delay(1000);
+            }
+        }
 
     void GreyOutShape(int index)
     {
