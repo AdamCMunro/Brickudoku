@@ -1256,7 +1256,7 @@ namespace Brickdoku
                             {
                                 ColourShape(number);
                             }
-                            Console.WriteLine("true");
+                            //Console.WriteLine("true");
                             if (numberNotPlaceable != 0)
                             {
                                 numberNotPlaceable--;
@@ -1276,15 +1276,18 @@ namespace Brickdoku
             }
             GreyOutShape(number);
             numberNotPlaceable++;
-            Console.WriteLine("false");
+            //Console.WriteLine("false");
             Console.WriteLine("Number not placeable: " + numberNotPlaceable);
             Console.WriteLine("Number of shapes: " + numberOfShapes);
             if (numberNotPlaceable == numberOfShapes) // if all remaining shapes are deemed not placeable, the game ends
             {
                 new System.Threading.ManualResetEvent(false).WaitOne(2000);
-                //rest values back to 0
-                numberOfShapes = 0;
-                numberNotPlaceable = 0;
+                //reset values back to 0 for Ai
+                if (AI == true)
+                {
+                    numberOfShapes = 0;
+                    numberNotPlaceable = 0;
+                }
                 DisplayGameOverScreen();
             }
             return false;
@@ -1334,7 +1337,7 @@ namespace Brickdoku
         {
             for (int i = 0; i < shapes[index].getSize(); i++)
             {
-                Console.WriteLine("grey");
+                //Console.WriteLine("grey");
                 shapes[index].getBlockAtIndex(i).BackColor = Color.Gray;
                 shapes[index].getBlockAtIndex(i).ForeColor = Color.Gray;
                 shapes[index].getBlockAtIndex(i).MouseMove -= BtnEvent_MouseMove;
