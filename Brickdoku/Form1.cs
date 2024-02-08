@@ -64,6 +64,7 @@ namespace Brickdoku
         int streak = 0;
 
         bool AI = false;
+        bool AI2 = false;
         bool clicked = false;
 
         Button clickedButton = null;
@@ -1262,7 +1263,7 @@ namespace Brickdoku
                                 numberNotPlaceable--;
                             }
 
-                            if (AI)
+                            if (AI && AI2)
                             {
                                 AiPlaceShape(x, y, shapes[number]); // if the AI is playing, the shape is placed in the available space
                                 
@@ -1293,6 +1294,9 @@ namespace Brickdoku
             return false;
         }
 
+        /**
+         * Place shape in the AI version of the game
+         */
         void AiPlaceShape(int x, int y, Shape shape)
         {
             int xMod;
@@ -1317,7 +1321,7 @@ namespace Brickdoku
             DisplayStreakAndCombo(numberOfCompleted);
             CalculateScore(shape, numberOfCompleted, streak);
             RegenerateShapes();
-            AI = false; // temporarily set to false
+            AI2 = false; // temporarily set to false
             for (int i = 0; i < 3; i++)
             {
                 // remove the shape we have  from the generated numbers array by resestting to zero
@@ -1327,7 +1331,7 @@ namespace Brickdoku
                     placeable[i] = CheckShapeFits(generatedNumbers[i]);
                 }
             }
-            AI = true;
+            AI2 = true;
         }
 
         /**
@@ -1445,12 +1449,16 @@ namespace Brickdoku
 
             }
 
-            Controls.Add(btnPlayAgain);
-            btnPlayAgain.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            btnPlayAgain.Text = "Play Again";
-            btnPlayAgain.BackColor = Color.LightPink;
-            btnPlayAgain.SetBounds(385, 500, 100, 75);
-            btnPlayAgain.Click += (sender, e) => BtnPlayAgain_Click(sender, e, lblGameOver, btnPlayAgain, btnExit, lblPlayerFinalScore, lblHighScores, lblGameOverScoreHeader);
+            if (AI == false)
+            {
+                Controls.Add(btnPlayAgain);
+                btnPlayAgain.Font = new System.Drawing.Font("OCR A Extended", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                btnPlayAgain.Text = "Play Again";
+                btnPlayAgain.BackColor = Color.LightPink;
+                btnPlayAgain.SetBounds(385, 500, 100, 75);
+                btnPlayAgain.Click += (sender, e) => BtnPlayAgain_Click(sender, e, lblGameOver, btnPlayAgain, btnExit, lblPlayerFinalScore, lblHighScores, lblGameOverScoreHeader);
+
+            }
 
             Controls.Add(lblPlayerFinalScore);
             lblPlayerFinalScore.Font = new System.Drawing.Font("OCR A Extended", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1860,6 +1868,7 @@ namespace Brickdoku
             BtnStart.Hide();
             BtnAI.Hide();
             AI = true; // so other parts of the game know that it is playing the AI version
+            AI2 = true;
             this.BackgroundImage = null; // remove image from gameplay screen
             this.BackColor = Color.Linen;
             menuStrip1.BackColor = Color.Linen;
