@@ -564,7 +564,7 @@ namespace Brickdoku
         private void Form1_Load(object sender, EventArgs e)
         {
             // required
-           
+
         }
 
         public Brickudoku()
@@ -616,7 +616,11 @@ namespace Brickdoku
                     //remove the hover over highlight by setting 
                     btn[x, y].Enabled = true;
                     // slow down the appearing of the grid slightly
-                    System.Threading.Thread.Sleep(10);
+                    if (AI == false)
+                    {
+                        System.Threading.Thread.Sleep(10);
+                    }
+                    
                 }
             }
         }
@@ -779,340 +783,340 @@ namespace Brickdoku
         }
 
 
-    private void Form1_Load_1(object sender, EventArgs e)
-    {
-
-    }
-
-    private void BtnStart_Click(object sender, EventArgs e)
-    {
-        // when start button is clicked, hide all the items in the current menu screen
-        // and display the grid game form
-        BtnExit.Hide();
-        BtnStart.Hide();
-        BtnAI.Hide();
-        this.BackgroundImage = null; // remove image from gameplay screen
-        this.BackColor = Color.Linen;
-        menuStrip1.BackColor = Color.Linen;
-        CreateGrid();
-        SetUpLabels();
-        InitialiseGridOccupancy();
-        GenerateRandomShapeNumbers();
-    }
-
-    /**
-     * Set information for the two labels needed for streaks and combinations
-     */
-    void SetUpLabels()
-    {
-        // create a title label for the top of the screen
-        Label lblTitle = new Label();
-        Controls.Add(lblTitle);
-        lblTitle.Font = new System.Drawing.Font("OCR A Extended", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        lblTitle.Text = "Brickudoku";
-        lblTitle.BringToFront();
-        lblTitle.ForeColor = System.Drawing.Color.Crimson;
-        lblTitle.SetBounds(400, 10, 250, 40);
-
-        // combinations label
-        lblCombination.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        lblCombination.ForeColor = System.Drawing.Color.Crimson;
-        lblCombination.SetBounds(750, 100, 250, 40);
-        lblCombination.Visible = false;
-        Controls.Add(lblCombination);
-
-        // streaks label
-        lblStreak.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        lblStreak.ForeColor = System.Drawing.Color.Crimson;
-        lblStreak.SetBounds(750, 150, 250, 40);
-        lblStreak.Visible = false;
-        Controls.Add(lblStreak);
-
-        // create a display score label
-        lblDisplayScore.Font = new System.Drawing.Font("OCR A Extended", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        lblDisplayScore.Text = "Score";
-        lblDisplayScore.ForeColor = System.Drawing.Color.Crimson;
-        lblDisplayScore.SetBounds(780, 300, 250, 40);
-        Controls.Add(lblDisplayScore);
-
-        // add actual score label
-        lblScore.Font = new System.Drawing.Font("OCR A Extended", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        lblScore.Text = "0";
-        lblScore.ForeColor = System.Drawing.Color.Crimson;
-        lblScore.SetBounds(820, 350, 250, 40);
-        Controls.Add(lblScore);
-
-        // label for the score increase on that turn
-        lblScoreIncrease.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        lblScoreIncrease.Text = "";
-        lblScoreIncrease.ForeColor = System.Drawing.Color.Crimson;
-        lblScoreIncrease.SetBounds(820, 250, 250, 40);
-        lblScoreIncrease.Visible = false;
-        Controls.Add(lblScoreIncrease);
-    }
-
-    /**
-     * Generate 3 random numbers to be used to generate 3 shapes
-     * Call function to generate shapes at the correct positions
-     */
-    void GenerateRandomShapeNumbers()
-    {
-        // generate 3 random numbers and use that to generate three shapes
-        numberNotPlaceable = 0; // reset back to 0
-        for (int i = 0; i < 3; i++)
+        private void Form1_Load_1(object sender, EventArgs e)
         {
-            placed[i] = false;
-            Random random = new Random();
-            int number = random.Next(48); // generate random number < 48
-                                          // check number is not already in list of already generated
-            while (generatedNumbers.Contains(number))
-            {
-                // if it already contains the number generate a new number till a unique one is found
-                random = new Random();
-                number = random.Next(38);
 
-            }
-            // add the number to the array so it is not used again
-            generatedNumbers[i] = number;
-
-            //Console.WriteLine("Random number: " + number);
-            GenerateShape(number, 100, 80 + (i * 220));
-            numberOfShapes++;
         }
-        // check shape fits for all generated numbers
-        for (int i = 0; i < 3; i++)
-        {
-            placeable[i] = CheckShapeFits(generatedNumbers[i]);
-        }
-    }
 
-    /**
-     * Check if new shapes are needed and regenerate
-     */
-    void RegenerateShapes()
-    {
-        // if there are no shapes, generate 3 new ones
-        if (numberOfShapes == 0)
+        private void BtnStart_Click(object sender, EventArgs e)
         {
+            // when start button is clicked, hide all the items in the current menu screen
+            // and display the grid game form
+            BtnExit.Hide();
+            BtnStart.Hide();
+            BtnAI.Hide();
+            this.BackgroundImage = null; // remove image from gameplay screen
+            this.BackColor = Color.Linen;
+            menuStrip1.BackColor = Color.Linen;
+            CreateGrid();
+            SetUpLabels();
+            InitialiseGridOccupancy();
             GenerateRandomShapeNumbers();
         }
-    }
 
-    /**
-     * Function to check for a complete line or square
-     * Keep a list of rows, columns and sqaures that are complete
-     * Keep a total of how many were completed to check for streaks and comboss
-     */
-    void CheckComplete()
-    {
-        // clear rows, columns and squares
-        rows.Clear();
-        squares.Clear();
-        columns.Clear();
-        numberOfCompleted = 0;
-
-        // lsit to store columns that we know are empty so we don't check twice
-        List<int> emptyColumns = new List<int>();
-
-        // check rows
-        for (int y = 0; y < 9; y++)
+        /**
+         * Set information for the two labels needed for streaks and combinations
+         */
+        void SetUpLabels()
         {
-            for (int x = 0; x < 9; x++)
+            // create a title label for the top of the screen
+            Label lblTitle = new Label();
+            Controls.Add(lblTitle);
+            lblTitle.Font = new System.Drawing.Font("OCR A Extended", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblTitle.Text = "Brickudoku";
+            lblTitle.BringToFront();
+            lblTitle.ForeColor = System.Drawing.Color.Crimson;
+            lblTitle.SetBounds(400, 10, 250, 40);
+
+            // combinations label
+            lblCombination.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblCombination.ForeColor = System.Drawing.Color.Crimson;
+            lblCombination.SetBounds(750, 100, 250, 40);
+            lblCombination.Visible = false;
+            Controls.Add(lblCombination);
+
+            // streaks label
+            lblStreak.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblStreak.ForeColor = System.Drawing.Color.Crimson;
+            lblStreak.SetBounds(750, 150, 250, 40);
+            lblStreak.Visible = false;
+            Controls.Add(lblStreak);
+
+            // create a display score label
+            lblDisplayScore.Font = new System.Drawing.Font("OCR A Extended", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblDisplayScore.Text = "Score";
+            lblDisplayScore.ForeColor = System.Drawing.Color.Crimson;
+            lblDisplayScore.SetBounds(780, 300, 250, 40);
+            Controls.Add(lblDisplayScore);
+
+            // add actual score label
+            lblScore.Font = new System.Drawing.Font("OCR A Extended", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblScore.Text = "0";
+            lblScore.ForeColor = System.Drawing.Color.Crimson;
+            lblScore.SetBounds(820, 350, 250, 40);
+            Controls.Add(lblScore);
+
+            // label for the score increase on that turn
+            lblScoreIncrease.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblScoreIncrease.Text = "";
+            lblScoreIncrease.ForeColor = System.Drawing.Color.Crimson;
+            lblScoreIncrease.SetBounds(820, 250, 250, 40);
+            lblScoreIncrease.Visible = false;
+            Controls.Add(lblScoreIncrease);
+        }
+
+        /**
+         * Generate 3 random numbers to be used to generate 3 shapes
+         * Call function to generate shapes at the correct positions
+         */
+        void GenerateRandomShapeNumbers()
+        {
+            // generate 3 random numbers and use that to generate three shapes
+            numberNotPlaceable = 0; // reset back to 0
+            for (int i = 0; i < 3; i++)
             {
-                //btn[x, y].BackColor = Color.LightGreen;
-                if (gridOccupied[x, y] == false)
+                placed[i] = false;
+                Random random = new Random();
+                int number = random.Next(48); // generate random number < 48
+                                              // check number is not already in list of already generated
+                while (generatedNumbers.Contains(number))
                 {
-                    // column x must therefore also be empty so don't check it later
-                    emptyColumns.Add(x);
-                    // if one x is not occupied, then the whole line is not occupied
-                    break; // go to next row
+                    // if it already contains the number generate a new number till a unique one is found
+                    random = new Random();
+                    number = random.Next(38);
+
                 }
-                // if x is 8, then everyhting in that row is occupied, so clear
-                if (x == 8)
-                {
-                    Console.WriteLine("row: " + y + " fully occupied");
-                    rows.Add(y);
-                    numberOfCompleted++;
-                }
+                // add the number to the array so it is not used again
+                generatedNumbers[i] = number;
+
+                //Console.WriteLine("Random number: " + number);
+                GenerateShape(number, 100, 80 + (i * 220));
+                numberOfShapes++;
+            }
+            // check shape fits for all generated numbers
+            for (int i = 0; i < 3; i++)
+            {
+                placeable[i] = CheckShapeFits(generatedNumbers[i]);
             }
         }
-        // check columns
-        for (int x = 0; x < 9; x++)
+
+        /**
+         * Check if new shapes are needed and regenerate
+         */
+        void RegenerateShapes()
         {
-            if (emptyColumns.Contains(x))
+            // if there are no shapes, generate 3 new ones
+            if (numberOfShapes == 0)
             {
-                continue;
+                GenerateRandomShapeNumbers();
             }
+        }
+
+        /**
+         * Function to check for a complete line or square
+         * Keep a list of rows, columns and sqaures that are complete
+         * Keep a total of how many were completed to check for streaks and comboss
+         */
+        void CheckComplete()
+        {
+            // clear rows, columns and squares
+            rows.Clear();
+            squares.Clear();
+            columns.Clear();
+            numberOfCompleted = 0;
+
+            // lsit to store columns that we know are empty so we don't check twice
+            List<int> emptyColumns = new List<int>();
+
+            // check rows
             for (int y = 0; y < 9; y++)
             {
-                //btn[x, y].BackColor = Color.Green;
-                if (gridOccupied[x, y] == false)
+                for (int x = 0; x < 9; x++)
                 {
-                    //Console.WriteLine("false" + x + "," + y);
-                    // if one in column is not occupied, then we can break
-                    break;
-                }
-                // if we reach y = 8 then there is a full column
-                if (y == 8)
-                {
-                    Console.WriteLine("Column: " + x + " fully occupied");
-                    columns.Add(x);
-                    numberOfCompleted++;
+                    //btn[x, y].BackColor = Color.LightGreen;
+                    if (gridOccupied[x, y] == false)
+                    {
+                        // column x must therefore also be empty so don't check it later
+                        emptyColumns.Add(x);
+                        // if one x is not occupied, then the whole line is not occupied
+                        break; // go to next row
+                    }
+                    // if x is 8, then everyhting in that row is occupied, so clear
+                    if (x == 8)
+                    {
+                        Console.WriteLine("row: " + y + " fully occupied");
+                        rows.Add(y);
+                        numberOfCompleted++;
+                    }
                 }
             }
-        }
-        // check for squares
-        // for each square 
-        bool occupied; // to check whether one space of a square is occupied to avoid having to loop the whole square
-        for (int s = 0; s < 9; s++)
-        {
-            occupied = true;
-            int occupiedSquares = 0;
-            // for each row in the square
-
+            // check columns
             for (int x = 0; x < 9; x++)
             {
-                if (occupied == false)
+                if (emptyColumns.Contains(x))
                 {
-                    break;
+                    continue;
                 }
-                else
+                for (int y = 0; y < 9; y++)
                 {
-                    // for squares 0,3,6 x < 2
-                    // if s is one of these values and x > 2, skip to next loop
-                    if ((s == 0 || s == 3 || s == 6) && x > 2)
+                    //btn[x, y].BackColor = Color.Green;
+                    if (gridOccupied[x, y] == false)
                     {
-                        continue;
+                        //Console.WriteLine("false" + x + "," + y);
+                        // if one in column is not occupied, then we can break
+                        break;
                     }
-                    // for sqaures 1,4,7, x>2, x<6
-                    else if ((s == 1 || s == 4 || s == 7) && (x < 3 || x > 5))
+                    // if we reach y = 8 then there is a full column
+                    if (y == 8)
                     {
-                        continue;
+                        Console.WriteLine("Column: " + x + " fully occupied");
+                        columns.Add(x);
+                        numberOfCompleted++;
                     }
-                    // for sqaures 2,5,8 x > 5
-                    else if ((s == 2 || s == 5 || s == 8) && x < 6)
+                }
+            }
+            // check for squares
+            // for each square 
+            bool occupied; // to check whether one space of a square is occupied to avoid having to loop the whole square
+            for (int s = 0; s < 9; s++)
+            {
+                occupied = true;
+                int occupiedSquares = 0;
+                // for each row in the square
+
+                for (int x = 0; x < 9; x++)
+                {
+                    if (occupied == false)
                     {
-                        continue;
+                        break;
                     }
-                    // for each column in the square
-                    for (int y = 0; y < 9; y++)
+                    else
                     {
-                        //btn[x, y].BackColor = Color.DarkGreen;
-                        // for squares 0,1,2 y < 2
-                        // if s is one of these values and x > 2, continue
-                        if ((s == 0 || s == 1 || s == 2) && y > 2)
+                        // for squares 0,3,6 x < 2
+                        // if s is one of these values and x > 2, skip to next loop
+                        if ((s == 0 || s == 3 || s == 6) && x > 2)
                         {
                             continue;
                         }
-                        // for sqaures 3,4,5, y>2, y<6
-                        else if ((s == 3 || s == 4 || s == 5) && (y < 3 || y > 5))
+                        // for sqaures 1,4,7, x>2, x<6
+                        else if ((s == 1 || s == 4 || s == 7) && (x < 3 || x > 5))
                         {
                             continue;
                         }
-                        // for sqaures 6,7,8 y > 5
-                        else if ((s == 6 || s == 7 || s == 8) && y < 6)
+                        // for sqaures 2,5,8 x > 5
+                        else if ((s == 2 || s == 5 || s == 8) && x < 6)
                         {
                             continue;
                         }
-                        // if any column in the square is unoccupied, break
-                        if (gridOccupied[x, y] == false)
+                        // for each column in the square
+                        for (int y = 0; y < 9; y++)
                         {
-                            occupied = false;
-                            break;
-                        }
-                        else
-                        {
-                            occupiedSquares++;
-                        }
-                        // if we have reach the end of x and y without breaking, the square is full
-                        if (occupiedSquares == 9)
-                        {
-                            Console.WriteLine("Sqaure " + s + " is full");
-                            for (int i = 0; i < 3; i++)
+                            //btn[x, y].BackColor = Color.DarkGreen;
+                            // for squares 0,1,2 y < 2
+                            // if s is one of these values and x > 2, continue
+                            if ((s == 0 || s == 1 || s == 2) && y > 2)
                             {
-                                for (int j = 0; j < 3; j++)
-                                {
-                                    squares.Add(new Tuple<int, int>(x - i, y - j));
-                                }
+                                continue;
                             }
-                            numberOfCompleted++;
+                            // for sqaures 3,4,5, y>2, y<6
+                            else if ((s == 3 || s == 4 || s == 5) && (y < 3 || y > 5))
+                            {
+                                continue;
+                            }
+                            // for sqaures 6,7,8 y > 5
+                            else if ((s == 6 || s == 7 || s == 8) && y < 6)
+                            {
+                                continue;
+                            }
+                            // if any column in the square is unoccupied, break
+                            if (gridOccupied[x, y] == false)
+                            {
+                                occupied = false;
+                                break;
+                            }
+                            else
+                            {
+                                occupiedSquares++;
+                            }
+                            // if we have reach the end of x and y without breaking, the square is full
+                            if (occupiedSquares == 9)
+                            {
+                                Console.WriteLine("Sqaure " + s + " is full");
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    for (int j = 0; j < 3; j++)
+                                    {
+                                        squares.Add(new Tuple<int, int>(x - i, y - j));
+                                    }
+                                }
+                                numberOfCompleted++;
+                            }
                         }
                     }
                 }
             }
-        }
-        // if anything has been completed, remove completed
-        if (numberOfCompleted > 0)
-        {
-            removeCompleted();
-        }
-    }
-
-    /**
-     * Function to remove the completed rows once they have been found
-     */
-    void removeCompleted()
-    {
-        // colour rows
-        for (int i = 0; i < rows.Count; i++)
-        {
-            for (int j = 0; j < 9; j++)
+            // if anything has been completed, remove completed
+            if (numberOfCompleted > 0)
             {
-                new System.Threading.ManualResetEvent(false).WaitOne(30);
-                gridOccupied[j, rows[i]] = false;
-                // set colour back to original
-                if ((rows[i] > 2 && rows[i] < 6 && (j < 3 || j > 5)) || (j > 2 && j < 6 && (rows[i] < 3 || rows[i] > 5)))
-                {
-                    btn[j, rows[i]].BackColor = Color.White;
-                    btn[j, rows[i]].ForeColor = Color.White;
-                }
-                else
-                {
-                    btn[j, rows[i]].BackColor = palePink;
-                    btn[j, rows[i]].ForeColor = palePink;
-                }
-            }
-        }
-        // change colours for all columns that are full
-        for (int i = 0; i < columns.Count; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                new System.Threading.ManualResetEvent(false).WaitOne(30);
-                gridOccupied[columns[i], j] = false;
-                // set column colour back to original
-                if ((j > 2 && j < 6 && (columns[i] < 3 || columns[i] > 5)) || (columns[i] > 2 && columns[i] < 6 && (j < 3 || j > 5)))
-                {
-                    btn[columns[i], j].BackColor = Color.White;
-                    btn[columns[i], j].ForeColor = Color.White;
-                }
-                else
-                {
-                    btn[columns[i], j].BackColor = palePink;
-                    btn[columns[i], j].ForeColor = palePink;
-                }
+                removeCompleted();
             }
         }
 
-        // change colours for all sqaures that are full
-        for (int i = 0; i < squares.Count; i++)
+        /**
+         * Function to remove the completed rows once they have been found
+         */
+        void removeCompleted()
         {
-            new System.Threading.ManualResetEvent(false).WaitOne(30);
-            int x = squares[i].Item1;
-            int y = squares[i].Item2;
-            gridOccupied[x, y] = false;
-            if ((x > 2 && x < 6 && y < 3) || (x < 3 && y > 2 && y < 6) || (x > 5 && y > 2 && y < 6) || (x > 2 && x < 6 && y > 5))
+            // colour rows
+            for (int i = 0; i < rows.Count; i++)
             {
-                btn[x, y].ForeColor = Color.White;
-                btn[x, y].BackColor = Color.White;
+                for (int j = 0; j < 9; j++)
+                {
+                    new System.Threading.ManualResetEvent(false).WaitOne(30);
+                    gridOccupied[j, rows[i]] = false;
+                    // set colour back to original
+                    if ((rows[i] > 2 && rows[i] < 6 && (j < 3 || j > 5)) || (j > 2 && j < 6 && (rows[i] < 3 || rows[i] > 5)))
+                    {
+                        btn[j, rows[i]].BackColor = Color.White;
+                        btn[j, rows[i]].ForeColor = Color.White;
+                    }
+                    else
+                    {
+                        btn[j, rows[i]].BackColor = palePink;
+                        btn[j, rows[i]].ForeColor = palePink;
+                    }
+                }
             }
-            else
+            // change colours for all columns that are full
+            for (int i = 0; i < columns.Count; i++)
             {
-                btn[x, y].BackColor = palePink;
-                btn[x, y].ForeColor = palePink;
+                for (int j = 0; j < 9; j++)
+                {
+                    new System.Threading.ManualResetEvent(false).WaitOne(30);
+                    gridOccupied[columns[i], j] = false;
+                    // set column colour back to original
+                    if ((j > 2 && j < 6 && (columns[i] < 3 || columns[i] > 5)) || (columns[i] > 2 && columns[i] < 6 && (j < 3 || j > 5)))
+                    {
+                        btn[columns[i], j].BackColor = Color.White;
+                        btn[columns[i], j].ForeColor = Color.White;
+                    }
+                    else
+                    {
+                        btn[columns[i], j].BackColor = palePink;
+                        btn[columns[i], j].ForeColor = palePink;
+                    }
+                }
+            }
+
+            // change colours for all sqaures that are full
+            for (int i = 0; i < squares.Count; i++)
+            {
+                new System.Threading.ManualResetEvent(false).WaitOne(30);
+                int x = squares[i].Item1;
+                int y = squares[i].Item2;
+                gridOccupied[x, y] = false;
+                if ((x > 2 && x < 6 && y < 3) || (x < 3 && y > 2 && y < 6) || (x > 5 && y > 2 && y < 6) || (x > 2 && x < 6 && y > 5))
+                {
+                    btn[x, y].ForeColor = Color.White;
+                    btn[x, y].BackColor = Color.White;
+                }
+                else
+                {
+                    btn[x, y].BackColor = palePink;
+                    btn[x, y].ForeColor = palePink;
+                }
             }
         }
-    }
 
         /**
         * Take in the shape placed and calculate the score
@@ -1143,130 +1147,131 @@ namespace Brickdoku
             }
         }
 
-    private void BtnExit_Click(object sender, EventArgs e)
-    {
-        Close();
-    }
-
-    // The volume control button
-    private void BtnMute_Click(object sender, EventArgs e)
-    {
-        // when clicked if playing, volume turns off, and image changes to muted image
-
-        if (BtnMute.Text == "p")
+        private void BtnExit_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("button pressed - muting");
-            MXP.Ctlcontrols.stop();
-            BtnMute.Text = "m";
-            try
-            {
-                BtnMute.BackgroundImage = Properties.Resources.muted;
-            }
-            catch (System.IO.FileNotFoundException)
-            {
-                Console.WriteLine("Error finding image!");
-            }
-        }
-        else
-        {
-            Console.WriteLine("button pressed - playing");
-            PlayMediaPlayer();
-            BtnMute.Text = "p";
-            try
-            {
-                BtnMute.BackgroundImage = Properties.Resources.playing;
-            }
-            catch (System.IO.FileNotFoundException)
-            {
-                Console.WriteLine("Error finding image!");
-            }
-        }
-    }
-
-    private void PlayMediaPlayer()
-    {
-
-        if (bgPlaying == true)
-        {
-
-            background_music.Stop();
-            bgPlaying = false;
+            Close();
         }
 
-        MXP.Ctlcontrols.play();
-
-    }
-    // USed this tutorial to use MediaPlayer https://www.youtube.com/watch?v=Ch7yY3ti_aI
-    private void PlayBackgroundSoundPlayer(object sender, EventArgs e)
-    {
-        background_music = new SoundPlayer(@"Brikudoku_Music.wav");
-        background_music.PlayLooping();
-        MXP.Ctlcontrols.stop(); // stop the media player
-        bgPlaying = true; // set playing to true
-    }
-
-    /**
-     * Check if a shape fits on the grid
-     */
-    bool CheckShapeFits(int number)
-    {
-        int xMod;
-        int yMod;
-        int count = 0;
-
-
-        for (int x = 0; x < 9; x++)
+        // The volume control button
+        private void BtnMute_Click(object sender, EventArgs e)
         {
-            for (int y = 0; y < 9; y++)
+            // when clicked if playing, volume turns off, and image changes to muted image
+
+            if (BtnMute.Text == "p")
             {
-                // for every block of the generated shape;
-                for (int i = 0; i < shapes[number].getSize(); i++)
+                Console.WriteLine("button pressed - muting");
+                MXP.Ctlcontrols.stop();
+                BtnMute.Text = "m";
+                try
                 {
-
-                    xMod = shapes[number].getXOffset(i) / generatedSize;
-                    yMod = shapes[number].getYOffset(i) / generatedSize;
-
-                    if (x + xMod >= 0 && x + xMod < 9 && y + yMod >= 0 && y + yMod < 9 && !gridOccupied[x + xMod, y + yMod])
-                    {
-                        count++;
-                    }
-                    if (count == shapes[number].getSize())
-                    {
-                        if (shapes[number].getBlockAtIndex(0).BackColor == Color.Gray)
-                        {
-                            ColourShape(number);
-                        }
-                        Console.WriteLine("true");
-                        if (numberNotPlaceable != 0)
-                        {
-                            numberNotPlaceable--;
-                        }
-
-                        if (AI)
-                        {
-                            AiPlaceShape(x, y, shapes[number]);
-                        }
-
-                        return true;
-                    }
+                    BtnMute.BackgroundImage = Properties.Resources.muted;
                 }
-                count = 0;
+                catch (System.IO.FileNotFoundException)
+                {
+                    Console.WriteLine("Error finding image!");
+                }
+            }
+            else
+            {
+                Console.WriteLine("button pressed - playing");
+                PlayMediaPlayer();
+                BtnMute.Text = "p";
+                try
+                {
+                    BtnMute.BackgroundImage = Properties.Resources.playing;
+                }
+                catch (System.IO.FileNotFoundException)
+                {
+                    Console.WriteLine("Error finding image!");
+                }
             }
         }
-        GreyOutShape(number);
-        numberNotPlaceable++;
-        Console.WriteLine("false");
-        Console.WriteLine("Number not placeable: " + numberNotPlaceable);
-        Console.WriteLine("Number of shapes: " + numberOfShapes);
-        if (numberNotPlaceable == numberOfShapes)
-        {
-            new System.Threading.ManualResetEvent(false).WaitOne(2000);
-            DisplayGameOverScreen();
-        }
-        return false;
-    }
 
-    async void AiPlaceShape(int x, int y, Shape shape)
+        private void PlayMediaPlayer()
+        {
+
+            if (bgPlaying == true)
+            {
+
+                background_music.Stop();
+                bgPlaying = false;
+            }
+
+            MXP.Ctlcontrols.play();
+
+        }
+        // USed this tutorial to use MediaPlayer https://www.youtube.com/watch?v=Ch7yY3ti_aI
+        private void PlayBackgroundSoundPlayer(object sender, EventArgs e)
+        {
+            background_music = new SoundPlayer(@"Brikudoku_Music.wav");
+            background_music.PlayLooping();
+            MXP.Ctlcontrols.stop(); // stop the media player
+            bgPlaying = true; // set playing to true
+        }
+
+        /**
+         * Check if a shape fits on the grid
+         */
+        bool CheckShapeFits(int number)
+        {
+            int xMod;
+            int yMod;
+            int count = 0;
+
+
+            for (int x = 0; x < 9; x++)
+            {
+                for (int y = 0; y < 9; y++)
+                {
+                    // for every block of the generated shape;
+                    for (int i = 0; i < shapes[number].getSize(); i++)
+                    {
+
+                        xMod = shapes[number].getXOffset(i) / generatedSize;
+                        yMod = shapes[number].getYOffset(i) / generatedSize;
+
+                        if (x + xMod >= 0 && x + xMod < 9 && y + yMod >= 0 && y + yMod < 9 && !gridOccupied[x + xMod, y + yMod])
+                        {
+                            count++;
+                        }
+                        if (count == shapes[number].getSize())
+                        {
+                            if (shapes[number].getBlockAtIndex(0).BackColor == Color.Gray)
+                            {
+                                ColourShape(number);
+                            }
+                            Console.WriteLine("true");
+                            if (numberNotPlaceable != 0)
+                            {
+                                numberNotPlaceable--;
+                            }
+
+                            if (AI)
+                            {
+                                AiPlaceShape(x, y, shapes[number]);
+                                
+                            }
+
+                            return true;
+                        }
+                    }
+                    count = 0;
+                }
+            }
+            GreyOutShape(number);
+            numberNotPlaceable++;
+            Console.WriteLine("false");
+            Console.WriteLine("Number not placeable: " + numberNotPlaceable);
+            Console.WriteLine("Number of shapes: " + numberOfShapes);
+            if (numberNotPlaceable == numberOfShapes)
+            {
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                DisplayGameOverScreen();
+            }
+            return false;
+        }
+
+        void AiPlaceShape(int x, int y, Shape shape)
         {
             int xMod;
             int yMod;
@@ -1278,34 +1283,45 @@ namespace Brickdoku
 
                 btn[x + xMod, y + yMod].BackColor = Color.Crimson;
                 gridOccupied[x + xMod, y + yMod] = true;
-                await Task.Delay(1000);
+                shape.getBlockAtIndex(i).Hide();
+            }
+            
+            numberOfShapes--;
+            numberNotPlaceable = 0;
+            new System.Threading.ManualResetEvent(false).WaitOne(1000);
+            CheckComplete();
+            DisplayStreakAndCombo(numberOfCompleted);
+            CalculateScore(shape, numberOfCompleted, streak);
+            RegenerateShapes();
+            
+
+
+        }
+
+        void GreyOutShape(int index)
+        {
+            for (int i = 0; i < shapes[index].getSize(); i++)
+            {
+                Console.WriteLine("grey");
+                shapes[index].getBlockAtIndex(i).BackColor = Color.Gray;
+                shapes[index].getBlockAtIndex(i).ForeColor = Color.Gray;
+                shapes[index].getBlockAtIndex(i).MouseMove -= BtnEvent_MouseMove;
+                shapes[index].getBlockAtIndex(i).MouseUp -= BtnEvent_MouseUp;
+                shapes[index].getBlockAtIndex(i).MouseDown -= BtnEvent_MouseDown;
             }
         }
 
-    void GreyOutShape(int index)
-    {
-        for (int i = 0; i < shapes[index].getSize(); i++)
+        void ColourShape(int index)
         {
-            Console.WriteLine("grey");
-            shapes[index].getBlockAtIndex(i).BackColor = Color.Gray;
-            shapes[index].getBlockAtIndex(i).ForeColor = Color.Gray;
-            shapes[index].getBlockAtIndex(i).MouseMove -= BtnEvent_MouseMove;
-            shapes[index].getBlockAtIndex(i).MouseUp -= BtnEvent_MouseUp;
-            shapes[index].getBlockAtIndex(i).MouseDown -= BtnEvent_MouseDown;
+            for (int i = 0; i < shapes[index].getSize(); i++)
+            {
+                shapes[index].getBlockAtIndex(i).BackColor = Color.Crimson;
+                shapes[index].getBlockAtIndex(i).ForeColor = Color.Crimson;
+                shapes[index].getBlockAtIndex(i).MouseMove += BtnEvent_MouseMove;
+                shapes[index].getBlockAtIndex(i).MouseUp += BtnEvent_MouseUp;
+                shapes[index].getBlockAtIndex(i).MouseDown += BtnEvent_MouseDown;
+            }
         }
-    }
-
-    void ColourShape(int index)
-    {
-        for (int i = 0; i < shapes[index].getSize(); i++)
-        {
-            shapes[index].getBlockAtIndex(i).BackColor = Color.Crimson;
-            shapes[index].getBlockAtIndex(i).ForeColor = Color.Crimson;
-            shapes[index].getBlockAtIndex(i).MouseMove += BtnEvent_MouseMove;
-            shapes[index].getBlockAtIndex(i).MouseUp += BtnEvent_MouseUp;
-            shapes[index].getBlockAtIndex(i).MouseDown += BtnEvent_MouseDown;
-        }
-    }
 
         async void DisplayGameOverScreen()
         {
@@ -1480,133 +1496,133 @@ namespace Brickdoku
         }
 
         void TxtBoxUserName_Enter(object sender, KeyEventArgs e, Label lbl, Label[] lblName, int score, int[] highScoreScores, int index, Button playAgain)
-    {
-        if (e.KeyCode == Keys.Enter)
         {
-            ((Control)sender).Hide();
-            lbl.Hide();
+            if (e.KeyCode == Keys.Enter)
+            {
+                ((Control)sender).Hide();
+                lbl.Hide();
                 DisplayHighScoreData(lblName[index], ((Control)sender).Text, score);
 
-            int currentScore;
+                int currentScore;
 
-            string fileOutputText = "";
-            for (int i = 0; i < highScoreScores.Length; i++)
-            {
-                string currentName = lblName[i].Text.Substring(0, 3);
-                Console.WriteLine("name: " + currentName);
-                currentScore = highScoreScores[i];
-                fileOutputText = fileOutputText + currentName + ":" + currentScore + ":";
+                string fileOutputText = "";
+                for (int i = 0; i < highScoreScores.Length; i++)
+                {
+                    string currentName = lblName[i].Text.Substring(0, 3);
+                    Console.WriteLine("name: " + currentName);
+                    currentScore = highScoreScores[i];
+                    fileOutputText = fileOutputText + currentName + ":" + currentScore + ":";
+                }
+                fileOutputText = fileOutputText.Remove(fileOutputText.Length - 1, 1); // code from https://www.c-sharpcorner.com/blogs/remove-last-character-from-string-in-c-sharp1
+                System.IO.File.WriteAllText("..\\..\\HighScores.txt", fileOutputText);
+
             }
-            fileOutputText = fileOutputText.Remove(fileOutputText.Length - 1, 1); // code from https://www.c-sharpcorner.com/blogs/remove-last-character-from-string-in-c-sharp1
-            System.IO.File.WriteAllText("..\\..\\HighScores.txt", fileOutputText);
-
         }
-    }
-    private void BtnPlayAgain_Click(object sender, EventArgs e, Label lblGameOver, Button btnPlayAgain, Button btnExit, Label finalScore, Label[] highScores, Label gameOverHead)
-    {
-        // when start button is clicked, hide all the items in the current menu screen
-        // and display the grid game form
-        btnExit.Hide();
-        btnPlayAgain.Hide();
-        lblGameOver.Hide();
-        finalScore.Hide();
-        gameOverHead.Hide();
-        foreach (Label l in highScores)
+        private void BtnPlayAgain_Click(object sender, EventArgs e, Label lblGameOver, Button btnPlayAgain, Button btnExit, Label finalScore, Label[] highScores, Label gameOverHead)
         {
-            l.Hide();
+            // when start button is clicked, hide all the items in the current menu screen
+            // and display the grid game form
+            btnExit.Hide();
+            btnPlayAgain.Hide();
+            lblGameOver.Hide();
+            finalScore.Hide();
+            gameOverHead.Hide();
+            foreach (Label l in highScores)
+            {
+                l.Hide();
+            }
+            InitialiseGridOccupancy(); // reset occupancy
+            this.BackColor = Color.Linen;
+            // make playable again
+            for (int y = 0; y < 9; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    // redisplay grid with correct colours
+                    if ((x > 2 && x < 6 && y < 3) || (x < 3 && y > 2 && y < 6) || (x > 5 && y > 2 && y < 6) || (x > 2 && x < 6 && y > 5))
+                    {
+                        btn[x, y].BackColor = Color.White;
+                    }
+                    else
+                    {
+                        btn[x, y].BackColor = palePink;
+                    }
+                    btn[x, y].Show();
+                }
+            }
+            // reset all placeable to true
+            for (int i = 0; i < placeable.Length; i++)
+            {
+                placeable[i] = true;
+            }
+            // reset all generated numbers to 0
+            for (int i = 0; i < generatedNumbers.Length; i++)
+            {
+                generatedNumbers[i] = -1;
+            }
+            numberOfShapes = 0;
+            totalScore = 0;
+            streak = 0;
+            dragging = false;
+            draggedShape = null;
+            numberOfCompleted = 0;
+            lblScore.Text = "0";
+            lblScore.Show();
+            lblDisplayScore.Show();
+            InitialiseGridOccupancy();
+            GenerateRandomShapeNumbers();
         }
-        InitialiseGridOccupancy(); // reset occupancy
-        this.BackColor = Color.Linen;
-        // make playable again
-        for (int y = 0; y < 9; y++)
+
+        /**
+         * Hide all buttons in the grid
+         */
+        void HideGrid()
         {
             for (int x = 0; x < 9; x++)
             {
-                // redisplay grid with correct colours
-                if ((x > 2 && x < 6 && y < 3) || (x < 3 && y > 2 && y < 6) || (x > 5 && y > 2 && y < 6) || (x > 2 && x < 6 && y > 5))
+                for (int y = 0; y < 9; y++)
                 {
-                    btn[x, y].BackColor = Color.White;
+                    btn[x, y].Hide();
                 }
-                else
-                {
-                    btn[x, y].BackColor = palePink;
-                }
-                btn[x, y].Show();
             }
         }
-        // reset all placeable to true
-        for (int i = 0; i < placeable.Length; i++)
-        {
-            placeable[i] = true;
-        }
-        // reset all generated numbers to 0
-        for (int i = 0; i < generatedNumbers.Length; i++)
-        {
-            generatedNumbers[i] = -1;
-        }
-        numberOfShapes = 0;
-        totalScore = 0;
-        streak = 0;
-        dragging = false;
-        draggedShape = null;
-        numberOfCompleted = 0;
-        lblScore.Text = "0";
-        lblScore.Show();
-        lblDisplayScore.Show();
-        InitialiseGridOccupancy();
-        GenerateRandomShapeNumbers();
-    }
 
-    /**
-     * Hide all buttons in the grid
-     */
-    void HideGrid()
-    {
-        for (int x = 0; x < 9; x++)
+        /**
+         * Hide all shapes that were leftover at the end of the previous game
+         */
+        void HideShapes()
         {
-            for (int y = 0; y < 9; y++)
+            for (int i = 0; i < generatedNumbers.Length; i++)
             {
-                btn[x, y].Hide();
-            }
-        }
-    }
-
-    /**
-     * Hide all shapes that were leftover at the end of the previous game
-     */
-    void HideShapes()
-    {
-        for (int i = 0; i < generatedNumbers.Length; i++)
-        {
-            Shape shape = shapes[generatedNumbers[i]];
-            for (int j = 0; j < shape.getSize(); j++)
-            {
-                // if not already hidden, hide
-                if (shape.getBlockAtIndex(j).Visible == true)
+                Shape shape = shapes[generatedNumbers[i]];
+                for (int j = 0; j < shape.getSize(); j++)
                 {
-                    shape.getBlockAtIndex(j).Visible = false;
-                    Controls.Remove(shape.getBlockAtIndex(j));
-                    shape.getBlockAtIndex(j).MouseMove -= new MouseEventHandler(this.BtnEvent_MouseMove);
-                    shape.getBlockAtIndex(j).MouseUp -= new MouseEventHandler(this.BtnEvent_MouseUp);
-                    shape.getBlockAtIndex(j).MouseUp -= new MouseEventHandler(this.BtnEvent_MouseDown);
+                    // if not already hidden, hide
+                    if (shape.getBlockAtIndex(j).Visible == true)
+                    {
+                        shape.getBlockAtIndex(j).Visible = false;
+                        Controls.Remove(shape.getBlockAtIndex(j));
+                        shape.getBlockAtIndex(j).MouseMove -= new MouseEventHandler(this.BtnEvent_MouseMove);
+                        shape.getBlockAtIndex(j).MouseUp -= new MouseEventHandler(this.BtnEvent_MouseUp);
+                        shape.getBlockAtIndex(j).MouseUp -= new MouseEventHandler(this.BtnEvent_MouseDown);
+                    }
                 }
             }
         }
-    }
 
-    private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        Close();
-    }
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
 
-    private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        DialogResult result;
-        result = MessageBox.Show("Brickudoku by Adam Munro, Marylou Das Chagas e Silva and Laura Clark, 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
-    }
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult result;
+            result = MessageBox.Show("Brickudoku by Adam Munro, Marylou Das Chagas e Silva and Laura Clark, 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
 
-    void RulesSetUp()
-    {
+        void RulesSetUp()
+        {
             RulesForm.AutoScroll = true; // make scroll automatically
 
             RulesForm.Icon = Properties.Resources.BrickudokuIcon;
@@ -1725,72 +1741,72 @@ namespace Brickdoku
             RulesForm.Controls.Add(LblSpacing);
         }
 
-    /**
-     * Event handler for button to close the rules page
-     */
-    private void BtnRulesClose_Click(object sender, EventArgs e)
-    {
-        RulesForm.Close();
+        /**
+         * Event handler for button to close the rules page
+         */
+        private void BtnRulesClose_Click(object sender, EventArgs e)
+        {
+            RulesForm.Close();
+        }
+
+        /**
+         * Event handler to show the rules form when rules menu option is clicked
+         */
+        private void RulesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // show the rules form
+            RulesForm.ShowDialog();
+        }
+
+        /**
+         * Function to set and place the gamepleay images
+         */
+        void CreateGamePlayImages()
+        {
+            PictureBox rowImage = new PictureBox();
+            rowImage.Image = Properties.Resources.row;
+            rowImage.SetBounds(50, 450, 150, 150);
+            rowImage.SizeMode = PictureBoxSizeMode.StretchImage;
+            RulesForm.Controls.Add(rowImage);
+
+            PictureBox colImage = new PictureBox();
+            colImage.Image = Properties.Resources.column;
+            colImage.SetBounds(230, 450, 150, 150);
+            colImage.SizeMode = PictureBoxSizeMode.StretchImage;
+            RulesForm.Controls.Add(colImage);
+
+            PictureBox squareImage = new PictureBox();
+            squareImage.Image = Properties.Resources.square;
+            squareImage.SetBounds(410, 450, 150, 150);
+            squareImage.SizeMode = PictureBoxSizeMode.StretchImage;
+            RulesForm.Controls.Add(squareImage);
+
+            PictureBox comboImage = new PictureBox();
+            comboImage.Image = Properties.Resources.combo;
+            comboImage.SetBounds(590, 450, 150, 150);
+            comboImage.SizeMode = PictureBoxSizeMode.StretchImage;
+            RulesForm.Controls.Add(comboImage);
+        }
+
+        private void BtnAI_Click(object sender, EventArgs e)
+        {
+            // initialise game the same as start game does
+            BtnExit.Hide();
+            BtnStart.Hide();
+            BtnAI.Hide();
+            AI = true; // make shapes non clickable 
+            this.BackgroundImage = null; // remove image from gameplay screen
+            this.BackColor = Color.Linen;
+            menuStrip1.BackColor = Color.Linen;
+            CreateGrid();
+            SetUpLabels();
+            InitialiseGridOccupancy();
+            GenerateRandomShapeNumbers();
+
+
+
+            // for each shape, go through and place in the first available space
+        }
     }
-
-    /**
-     * Event handler to show the rules form when rules menu option is clicked
-     */
-    private void RulesToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        // show the rules form
-        RulesForm.ShowDialog();
-    }
-
-    /**
-     * Function to set and place the gamepleay images
-     */
-    void CreateGamePlayImages()
-    {
-        PictureBox rowImage = new PictureBox();
-        rowImage.Image = Properties.Resources.row;
-        rowImage.SetBounds(50, 450, 150, 150);
-        rowImage.SizeMode = PictureBoxSizeMode.StretchImage;
-        RulesForm.Controls.Add(rowImage);
-
-        PictureBox colImage = new PictureBox();
-        colImage.Image = Properties.Resources.column;
-        colImage.SetBounds(230, 450, 150, 150);
-        colImage.SizeMode = PictureBoxSizeMode.StretchImage;
-        RulesForm.Controls.Add(colImage);
-
-        PictureBox squareImage = new PictureBox();
-        squareImage.Image = Properties.Resources.square;
-        squareImage.SetBounds(410, 450, 150, 150);
-        squareImage.SizeMode = PictureBoxSizeMode.StretchImage;
-        RulesForm.Controls.Add(squareImage);
-
-        PictureBox comboImage = new PictureBox();
-        comboImage.Image = Properties.Resources.combo;
-        comboImage.SetBounds(590, 450, 150, 150);
-        comboImage.SizeMode = PictureBoxSizeMode.StretchImage;
-        RulesForm.Controls.Add(comboImage);
-    }
-
-    private void BtnAI_Click(object sender, EventArgs e)
-    {
-        // initialise game the same as start game does
-        BtnExit.Hide();
-        BtnStart.Hide();
-        BtnAI.Hide();
-        AI = true; // make shapes non clickable 
-        this.BackgroundImage = null; // remove image from gameplay screen
-        this.BackColor = Color.Linen;
-        menuStrip1.BackColor = Color.Linen;
-        CreateGrid();
-        SetUpLabels();
-        InitialiseGridOccupancy();
-        GenerateRandomShapeNumbers();
-
-
-
-        // for each shape, go through and place in the first available space
-    }
-}
 }
 
