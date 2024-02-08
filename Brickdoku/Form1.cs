@@ -76,6 +76,10 @@ namespace Brickdoku
         Label lblScoreIncrease = new Label();  // score increase label
 
         Form RulesForm = new Form(); // form for rules
+
+        /**
+         * Class for the playable shapes
+         */
         class Shape
         {
             int size; // the number of blocks used to make the shape
@@ -121,32 +125,39 @@ namespace Brickdoku
                 blocks = new Button[size];
                 for (int i = 0; i < size; i++)
                 {
-                    blocks[i] = new Button();
+                    blocks[i] = new Button(); // initaliases a new button for each tile in the shape
                 }
                 this.xOffsetData = xOffsetData;
                 this.yOffsetData = yOffsetData;
             }
 
+            /**
+             * Returns the block at a given index
+             */
             public Button getBlockAtIndex(int i)
             {
                 return blocks[i];
             }
 
-            public void setSize(int size)
-            {
-                this.size = size;
-            }
-
+            /**
+             * Returns the size of a shape
+             */
             public int getSize()
             {
                 return size;
             }
 
+            /**
+             * Returns the xOffsetData for the block at a given index
+             */
             public int getXOffset(int i)
             {
                 return xOffsetData[i];
             }
 
+            /**
+             * Returns the yOffsetData for the block at a given index
+             */
             public int getYOffset(int i)
             {
                 return yOffsetData[i];
@@ -209,7 +220,6 @@ namespace Brickdoku
         /**
          * Create a shape using the the index from the shapes and the x and y positions to place it to
          */
-
         void GenerateShape(int index, int x, int y) // creates a shape using the data in the shapes array
         {
             for (int i = 0; i < shapes[index].getSize(); i++) // creates a button for each block required to make the shape
@@ -1225,7 +1235,7 @@ namespace Brickdoku
         {
             int xMod;
             int yMod;
-            int count = 0;
+            int count = 0; // the number of blocks that fit
 
 
             for (int x = 0; x < 9; x++)
@@ -1236,14 +1246,14 @@ namespace Brickdoku
                     for (int i = 0; i < shapes[number].getSize(); i++)
                     {
 
-                        xMod = shapes[number].getXOffset(i) / generatedSize;
+                        xMod = shapes[number].getXOffset(i) / generatedSize; // gets the offset in terms of the 2d array, i.e +1/-1, +2/-2, 0 etc..
                         yMod = shapes[number].getYOffset(i) / generatedSize;
 
-                        if (x + xMod >= 0 && x + xMod < 9 && y + yMod >= 0 && y + yMod < 9 && !gridOccupied[x + xMod, y + yMod])
+                        if (x + xMod >= 0 && x + xMod < 9 && y + yMod >= 0 && y + yMod < 9 && !gridOccupied[x + xMod, y + yMod]) // checks that the block is on the grid and the space isn't already occupied
                         {
                             count++;
                         }
-                        if (count == shapes[number].getSize())
+                        if (count == shapes[number].getSize()) // if every block fits on the gird
                         {
                             if (shapes[number].getBlockAtIndex(0).BackColor == Color.Gray)
                             {
@@ -1257,14 +1267,14 @@ namespace Brickdoku
 
                             if (AI)
                             {
-                                AiPlaceShape(x, y, shapes[number]);
+                                AiPlaceShape(x, y, shapes[number]); // if the AI is playing, the shape is placed in the available space
                                 
                             }
 
                             return true;
                         }
                     }
-                    count = 0;
+                    count = 0; // once the whole shape is checked for given values of x and y count is reset to 0
                 }
             }
             GreyOutShape(number);
@@ -1272,7 +1282,7 @@ namespace Brickdoku
             Console.WriteLine("false");
             Console.WriteLine("Number not placeable: " + numberNotPlaceable);
             Console.WriteLine("Number of shapes: " + numberOfShapes);
-            if (numberNotPlaceable == numberOfShapes)
+            if (numberNotPlaceable == numberOfShapes) // if all remaining shapes are deemed not placeable, the game ends
             {
                 new System.Threading.ManualResetEvent(false).WaitOne(2000);
                 DisplayGameOverScreen();
@@ -1291,7 +1301,7 @@ namespace Brickdoku
                 yMod = shape.getYOffset(i) / generatedSize;
 
                 btn[x + xMod, y + yMod].BackColor = Color.Crimson;
-                gridOccupied[x + xMod, y + yMod] = true;
+                gridOccupied[x + xMod, y + yMod] = true; //places each block at its correct position relative to the central coordinates
                 shape.getBlockAtIndex(i).Hide();
             }
             
@@ -1307,6 +1317,9 @@ namespace Brickdoku
 
         }
 
+        /**
+         * A shape is turned grey and its event handlers are removed
+         */
         void GreyOutShape(int index)
         {
             for (int i = 0; i < shapes[index].getSize(); i++)
@@ -1320,6 +1333,9 @@ namespace Brickdoku
             }
         }
 
+        /**
+         * A shape is coloured and its event handlers are added
+         */
         void ColourShape(int index)
         {
             for (int i = 0; i < shapes[index].getSize(); i++)
@@ -1332,6 +1348,9 @@ namespace Brickdoku
             }
         }
 
+        /**
+         * Displays a game over screen to the user and handles high score
+         */
         async void DisplayGameOverScreen()
         {
             HideGrid();
@@ -1341,48 +1360,44 @@ namespace Brickdoku
             Label lblGameOver = new Label();
             Button btnPlayAgain = new Button();
             Button btnExit = new Button();
-            Label lblGameOverScoreHeader = new Label();
+            Label lblGameOverScoreHeader = new Label(); // all the GUI elements for the game over screen are initialised
             Label[] lblHighScores = new Label[5];
             Label lblPlayerFinalScore = new Label();
             Label lblEnterName = new Label();
             TextBox txtBoxUserName = new TextBox();
-            string highScoresText = System.IO.File.ReadAllText("..\\..\\HighScores.txt");
+            string highScoresText = System.IO.File.ReadAllText("..\\..\\HighScores.txt"); // high score data is read from file, found: https://stackoverflow.com/questions/7569904/easiest-way-to-read-from-and-write-to-files
             string[] highScoreUsers = new string[5];
             int[] highScoreScores = new int[5];
             int newHighScoreIndex = -1;
             int j = 0;
             int k = 0;
 
-            string[] fileTextArr = highScoresText.Split(':');
+            string[] fileTextArr = highScoresText.Split(':'); // splits the file data into individual usernames and scores
 
             for (int i = 0; i < fileTextArr.Length; i++)
             {
                 Console.WriteLine(fileTextArr[i]);
-                if (fileTextArr[i] != "---" && fileTextArr[i] != "0")
+                if (fileTextArr[i] != "---" && fileTextArr[i] != "0") // checks if file data is null
                 {
-                    if (i % 2 == 0)
+                    if (i % 2 == 0) // even/odd indexes are used to distinguish the usernames and scores in the file data array
                     {
-                        Console.WriteLine("2x : " + i);
                         highScoreUsers[j] = fileTextArr[i];
                         j++;
                     }
                     else
                     {
-                        Console.WriteLine("1x : " + i);
                         highScoreScores[k] = int.Parse(fileTextArr[i]);
                         k++;
                     }
                 }
                 else if (i % 2 == 0)
                 {
-                    Console.WriteLine("2x : " + i);
-                    highScoreUsers[j] = "---";
+                    highScoreUsers[j] = "---"; //usernames are set to a basic value if not found in the file
                     j++;
                 }
                 else
                 {
-                    Console.WriteLine("1x : " + i);
-                    highScoreScores[k] = 0;
+                    highScoreScores[k] = 0; //scores are set to a basic value if not found in the file
                     k++;
                 }
             }
@@ -1401,7 +1416,7 @@ namespace Brickdoku
             btnExit.Click += new EventHandler(this.BtnExit_Click);
 
             Controls.Add(lblGameOverScoreHeader);
-            lblGameOverScoreHeader.Font = new System.Drawing.Font("OCR A Extended", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblGameOverScoreHeader.Font = new System.Drawing.Font("OCR A Extended", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))); // basic styling for game over GUI elements
             lblGameOverScoreHeader.Text = "Scores:";
             lblGameOverScoreHeader.ForeColor = System.Drawing.Color.Crimson;
             lblGameOverScoreHeader.SetBounds(160, 140, 200, 50);
@@ -1410,7 +1425,7 @@ namespace Brickdoku
             {
                 lblHighScores[i] = new Label();
                 Controls.Add(lblHighScores[i]);
-                lblHighScores[i].Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                lblHighScores[i].Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))); // high scores are added to the GUI
                 DisplayHighScoreData(lblHighScores[i], highScoreUsers[i], highScoreScores[i]);
                 lblHighScores[i].ForeColor = System.Drawing.Color.Crimson;
                 lblHighScores[i].SetBounds(160, 190 + ((i * 50)), 200, 50);
@@ -1430,12 +1445,12 @@ namespace Brickdoku
             lblPlayerFinalScore.ForeColor = System.Drawing.Color.Crimson;
             lblPlayerFinalScore.SetBounds(600, 250, 400, 100);
 
-            if (totalScore > highScoreScores[highScoreScores.Length - 1])
+            if (totalScore > highScoreScores[highScoreScores.Length - 1]) // checks if player score is greater than the lowest saved high score
             {
                 newHighScoreIndex = highScoreScores.Length - 1;
                 for (int i = 0; i < highScoreScores.Length - 1; i++)
                 {
-                    if (totalScore > highScoreScores[i])
+                    if (totalScore > highScoreScores[i]) // cycles through remaining saved high scores searching for the highest high score it beats
                     {
                         newHighScoreIndex = i;
                         break;
@@ -1443,7 +1458,7 @@ namespace Brickdoku
                 }
                 for (int i = 0; i < 5; i++)
                 {
-                    lblHighScores[newHighScoreIndex].Hide();
+                    lblHighScores[newHighScoreIndex].Hide(); // score to be replaced with the new high score flashes briefly
                     await Task.Delay(300);
                     lblHighScores[newHighScoreIndex].Show();
                     await Task.Delay(300);
@@ -1452,13 +1467,13 @@ namespace Brickdoku
                 {
                     if (i == newHighScoreIndex)
                     {
-                        highScoreScores[i] = totalScore;
-                        DisplayHighScoreData(lblHighScores[i], "---", totalScore);
+                        highScoreScores[i] = totalScore; // score to be replaced is changed
+                        DisplayHighScoreData(lblHighScores[i], "---", totalScore); // name is tempoorarily made blank
                     }
                     else
                     {
                         highScoreScores[i] = highScoreScores[i - 1];
-                        highScoreUsers[i] = highScoreUsers[i - 1];
+                        highScoreUsers[i] = highScoreUsers[i - 1]; // scores below the new high score are moved down the list with the last one being replaced
                         DisplayHighScoreData(lblHighScores[i], highScoreUsers[i], highScoreScores[i]);
                     }
                 }
@@ -1472,7 +1487,7 @@ namespace Brickdoku
                 Controls.Add(txtBoxUserName);
                 txtBoxUserName.Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                 txtBoxUserName.ForeColor = System.Drawing.Color.Crimson;
-                txtBoxUserName.MaxLength = 3;
+                txtBoxUserName.MaxLength = 3; // a text box for the user to enter their name with maximum length 3
                 txtBoxUserName.TextAlign = HorizontalAlignment.Center;
                 txtBoxUserName.SetBounds(460, 275, 75, 100);
                 txtBoxUserName.KeyDown += (sender, e) => TxtBoxUserName_Enter(sender, e, lblEnterName, lblHighScores, totalScore, highScoreScores, newHighScoreIndex, btnPlayAgain);
@@ -1480,6 +1495,9 @@ namespace Brickdoku
             }
         }
 
+        /**
+         * Displays the username and score of a given high score with correct formatting
+         */
         void DisplayHighScoreData(Label lbl, string name, int score)
         {
             if (score == 0)
@@ -1504,6 +1522,9 @@ namespace Brickdoku
             }
         }
 
+        /**
+         * Event listener for when the enter key is pressed after entering your name
+         */
         void TxtBoxUserName_Enter(object sender, KeyEventArgs e, Label lbl, Label[] lblName, int score, int[] highScoreScores, int index, Button playAgain)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1517,13 +1538,13 @@ namespace Brickdoku
                 string fileOutputText = "";
                 for (int i = 0; i < highScoreScores.Length; i++)
                 {
-                    string currentName = lblName[i].Text.Substring(0, 3);
+                    string currentName = lblName[i].Text.Substring(0, 3); // gets the name from the label text
                     Console.WriteLine("name: " + currentName);
                     currentScore = highScoreScores[i];
-                    fileOutputText = fileOutputText + currentName + ":" + currentScore + ":";
+                    fileOutputText = fileOutputText + currentName + ":" + currentScore + ":"; // appends file output text
                 }
                 fileOutputText = fileOutputText.Remove(fileOutputText.Length - 1, 1); // code from https://www.c-sharpcorner.com/blogs/remove-last-character-from-string-in-c-sharp1
-                System.IO.File.WriteAllText("..\\..\\HighScores.txt", fileOutputText);
+                System.IO.File.WriteAllText("..\\..\\HighScores.txt", fileOutputText); // writes to file
 
             }
         }
