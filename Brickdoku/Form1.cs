@@ -1121,26 +1121,7 @@ namespace Brickdoku
                 lblHighScores[i] = new Label();
                 Controls.Add(lblHighScores[i]);
                 lblHighScores[i].Font = new System.Drawing.Font("OCR A Extended", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                if (highScoreScores[i] == 0)
-                {
-                    lblHighScores[i].Text = highScoreUsers[i] + " : 00000";
-                }
-                else if (highScoreScores[i] < 10000 && highScoreScores[i] >= 1000)
-                {
-                    lblHighScores[i].Text = highScoreUsers[i] + " : 0" + highScoreScores[i];
-                }
-                else if (highScoreScores[i] < 1000 && highScoreScores[i] >= 100)
-                {
-                    lblHighScores[i].Text = highScoreUsers[i] + " : 00" + highScoreScores[i];
-                }
-                else if (highScoreScores[i] < 100 && highScoreScores[i] >= 10)
-                {
-                    lblHighScores[i].Text = highScoreUsers[i] + " : 000" + highScoreScores[i];
-                }
-                else
-                {
-                    lblHighScores[i].Text = highScoreUsers[i] + " : 0000" + highScoreScores[i];
-                }
+                displayHighScoreData(lblHighScores[i], highScoreUsers[i], highScoreScores[i]);
                 lblHighScores[i].ForeColor = System.Drawing.Color.Crimson;
                 lblHighScores[i].SetBounds(160, 190 + ((i * 50)), 200, 50);
 
@@ -1186,6 +1167,7 @@ namespace Brickdoku
                     {
                         highScoreScores[i] = highScoreScores[i - 1];
                         highScoreUsers[i] = highScoreUsers[i - 1];
+                        displayHighScoreData(lblHighScores[i], highScoreUsers[i], highScoreScores[i]);
                     }
                 }
 
@@ -1206,13 +1188,37 @@ namespace Brickdoku
             }
         }
 
-        static void txtBoxUserName_Enter(object sender, KeyEventArgs e, Label lbl, Label[] lblName, int score, int[] highScoreScores, int index, Button playAgain)
+        void displayHighScoreData(Label lbl, string name, int score)
+        {
+            if (score == 0)
+            {
+                lbl.Text = name + " : 00000";
+            }
+            else if (score < 10000 && score >= 1000)
+            {
+                lbl.Text = name + " : 0" + score;
+            }
+            else if (score < 1000 && score >= 100)
+            {
+                lbl.Text = name + " : 00" + score;
+            }
+            else if (score < 100 && score >= 10)
+            {
+                lbl.Text = name + " : 000" + score;
+            }
+            else
+            {
+                lbl.Text = name + " : 0000" + score;
+            }
+        }
+
+        private void txtBoxUserName_Enter(object sender, KeyEventArgs e, Label lbl, Label[] lblName, int score, int[] highScoreScores, int index, Button playAgain)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 ((Control)sender).Hide();
                 lbl.Hide();
-                lblName[index].Text = ((Control)sender).Text + " : " + score;
+                displayHighScoreData(lblName[index], ((Control)sender).Text, score);
 
                 int currentScore;
 
